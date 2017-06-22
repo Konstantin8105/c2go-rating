@@ -89,7 +89,7 @@ func main() {
 		if err != nil {
 			mistakeSource++
 			fmt.Printf("=== MISTAKE : %v =======\n", mistakeSource)
-			fmt.Printf("Cannot compile by gcc file with name : %v\nApp name: %v\n Error: %v\n\n", name, appName, stderr.String())
+			fmt.Printf("Cannot compile by c2go file with name : %v\nApp name: %v\n Error: %v\n\n", name, appName, stderr.String())
 		}
 	}
 	// Mistakes is not allowable
