@@ -6,9 +6,9 @@ https://cis.temple.edu/~giorgio/cis71/code/
 http://www.iu.hio.no/~mark/CTutorial/CTutorial.html
 
 ## Instruction
-1	go get -u github.com/Konstantin8105/c2go-rating
-2	copy folder from $GOPATH/src/github.com/Konstantin8105/c2go-rating/SingleCcode to $GOPATH/bin
-3	run `./c2go-rating`
+1.	go get -u github.com/Konstantin8105/c2go-rating
+2.	copy folder from $GOPATH/src/github.com/Konstantin8105/c2go-rating/SingleCcode to $GOPATH/bin
+3.	run `./c2go-rating`
 
 ## Table with results
 
