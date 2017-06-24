@@ -77,6 +77,8 @@ func main() {
 	// Check in gcc
 	// example: gcc -o hello hello.c
 	var mistakeSource int
+	var mistakeFilesGCC []string
+
 	for _, file := range files {
 		appName := addPrefix(single, convertFromSourceToAppName(file.Name()))
 		name := addPrefix(single, file.Name())
@@ -86,16 +88,22 @@ func main() {
 		cmd.Stdout = &out
 		cmd.Stderr = &stderr
 		err := cmd.Run()
-		if err != nil {
+		///////////////////////
+		removeGCCfiles(single)
+		///////////////////////
+		cmd2 := exec.Command("gcc", "-o", "-std=gnu99", appName, name)
+		var out2 bytes.Buffer
+		var stderr2 bytes.Buffer
+		cmd2.Stdout = &out2
+		cmd2.Stderr = &stderr2
+		err2 := cmd2.Run()
+
+		if err != nil && err2 != nil {
 			mistakeSource++
 			fmt.Printf("=== MISTAKE : %v =======\n", mistakeSource)
-			fmt.Printf("Cannot compile by c2go file with name : %v\nApp name: %v\n Error: %v\n\n", name, appName, stderr.String())
+			fmt.Printf("Cannot compile by c2go file with name : %v\nApp name: %v\n Error: %v\nError: %v\n", name, appName, stderr.String(), stderr2.String())
+			mistakeFilesGCC = append(mistakeFilesGCC, name)
 		}
-	}
-	// Mistakes is not allowable
-	fmt.Println("Amount mistake source: ", mistakeSource)
-	if mistakeSource > 0 {
-		os.Exit(1)
 	}
 	// Remove the gcc result
 	removeGCCfiles(single)
@@ -108,6 +116,7 @@ func main() {
 
 	// Transpiling by c2go
 	var mistakeC2Go int
+	var mistakeFilesC2GO []string
 	for _, file := range files {
 		goName := addPrefix(single, convertFromSourceToAppName(file.Name())+".go")
 		name := addPrefix(single, file.Name())
@@ -118,15 +127,32 @@ func main() {
 		cmd.Stderr = &stderr
 		err := cmd.Run()
 		if err != nil {
+			s := fmt.Sprintf("Command : clang %v -o %v %v\n", transpile, goName, name)
+			s += fmt.Sprintf("Cannot compile by gcc file with name : %v\nGo name : %v\nError: %v\n\n", name, goName, stderr.String())
 			mistakeC2Go++
 			fmt.Printf("=== MISTAKE : %v =======\n", mistakeC2Go)
-			fmt.Printf("Cannot compile by gcc file with name : %v\nGo name : %v\nError: %v\n\n", name, goName, stderr.String())
+			fmt.Println(s)
+			mistakeFilesC2GO = append(mistakeFilesC2GO, name)
 		}
 	}
 	// Remove Go files
 	removeGoFiles(single)
 
+	// Mistakes is not allowable
+	fmt.Println("Amount mistake source by gcc: ", mistakeSource)
+	for _, m := range mistakeFilesGCC {
+		fmt.Println("\tMistake file : ", m)
+	}
 	// Calculate rating
 	fmt.Println("Amount mistake c2go results: ", mistakeC2Go)
-	fmt.Printf("Result: %v is Ok at %v source c files\n", len(files)-mistakeC2Go, len(files))
+	for _, m := range mistakeFilesC2GO {
+		fmt.Println("\tMistake file : ", m)
+	}
+	fmt.Printf("Result: %v is Ok at %v source c files - %.5v procent. \n", len(files)-mistakeC2Go, len(files), float64(len(files)-mistakeC2Go)/float64(len(files))*100.0)
+
+	// multifile checking
+	// main files:
+	// studentlistmain.c  queue.h queue.c
+	// hmw10main.c stringarray.c stringarray.h
+	// selectionMain.c intArray.h intArray.c
 }
