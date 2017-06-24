@@ -5,7 +5,12 @@ C code base:
 https://cis.temple.edu/~giorgio/cis71/code/
 http://www.iu.hio.no/~mark/CTutorial/CTutorial.html
 
-Table with results
+## Instruction
+1	go get -u github.com/Konstantin8105/c2go-rating
+2	copy folder from $GOPATH/src/github.com/Konstantin8105/c2go-rating/SingleCcode to $GOPATH/bin
+3	run `./c2go-rating`
+
+## Table with results
 
 | Date | Result |
 |---|---|
@@ -13,7 +18,8 @@ Table with results
 | 24.06.2017 | 62 is Ok at 87 source c files |
 
 
-Present list of mistake files:
+## Present list of mistake files
+
 ```
 Amount mistake source by gcc:  1
 	Mistake file :  ./SingleCcode/kilo.c
