@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 const (
@@ -117,6 +118,7 @@ func main() {
 	// Transpiling by c2go
 	var mistakeC2Go int
 	var mistakeFilesC2GO []string
+	var errC2GO []string
 	for _, file := range files {
 		goName := addPrefix(single, convertFromSourceToAppName(file.Name())+".go")
 		name := addPrefix(single, file.Name())
@@ -133,6 +135,7 @@ func main() {
 			fmt.Printf("=== MISTAKE : %v =======\n", mistakeC2Go)
 			fmt.Println(s)
 			mistakeFilesC2GO = append(mistakeFilesC2GO, name)
+			errC2GO = append(errC2GO, stderr.String())
 		}
 	}
 	// Remove Go files
@@ -145,8 +148,9 @@ func main() {
 	}
 	// Calculate rating
 	fmt.Println("Amount mistake c2go results: ", mistakeC2Go)
-	for _, m := range mistakeFilesC2GO {
+	for i, m := range mistakeFilesC2GO {
 		fmt.Println("\tMistake file : ", m)
+		fmt.Println("\tError: ", strings.Split(errC2GO[i], "\n")[0])
 	}
 	fmt.Printf("Result: %v is Ok at %v source c files - %.5v procent. \n", len(files)-mistakeC2Go, len(files), float64(len(files)-mistakeC2Go)/float64(len(files))*100.0)
 
