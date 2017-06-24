@@ -153,6 +153,5 @@ func main() {
 	// multifile checking
 	// main files:
 	// studentlistmain.c  queue.h queue.c
-	// hmw10main.c stringarray.c stringarray.h
 	// selectionMain.c intArray.h intArray.c
 }
