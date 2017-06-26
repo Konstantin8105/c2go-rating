@@ -109,7 +109,7 @@ func main() {
 			cmd.Stderr = &stderr
 			err := cmd.Run()
 			///////////////////////
-			removeGCCfiles(single)
+			removeGCCfiles(single) // TODO : try to remove
 			///////////////////////
 			cmd2 := exec.Command("gcc", "-o", "-std=gnu99", appName, name)
 			var out2 bytes.Buffer
