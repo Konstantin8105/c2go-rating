@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 )
 
 const (
@@ -77,35 +78,58 @@ func main() {
 
 	// Check in gcc
 	// example: gcc -o hello hello.c
-	var mistakeSource int
 	var mistakeFilesGCC []string
 
-	for _, file := range files {
-		appName := addPrefix(single, convertFromSourceToAppName(file.Name()))
-		name := addPrefix(single, file.Name())
-		cmd := exec.Command("gcc", "-o", appName, name)
-		var out bytes.Buffer
-		var stderr bytes.Buffer
-		cmd.Stdout = &out
-		cmd.Stderr = &stderr
-		err := cmd.Run()
-		///////////////////////
-		removeGCCfiles(single)
-		///////////////////////
-		cmd2 := exec.Command("gcc", "-o", "-std=gnu99", appName, name)
-		var out2 bytes.Buffer
-		var stderr2 bytes.Buffer
-		cmd2.Stdout = &out2
-		cmd2.Stderr = &stderr2
-		err2 := cmd2.Run()
+	var wg sync.WaitGroup
 
-		if err != nil && err2 != nil {
-			mistakeSource++
-			fmt.Printf("=== MISTAKE : %v =======\n", mistakeSource)
-			fmt.Printf("Cannot compile by c2go file with name : %v\nApp name: %v\n Error: %v\nError: %v\n", name, appName, stderr.String(), stderr2.String())
-			mistakeFilesGCC = append(mistakeFilesGCC, name)
-		}
+	type message struct {
+		errBody  string
+		fileName string
 	}
+
+	chanMessage := make(chan message, 10)
+
+	go func() {
+		for m := range chanMessage {
+			fmt.Println(m.errBody)
+			mistakeFilesGCC = append(mistakeFilesGCC, m.fileName)
+		}
+	}()
+
+	for _, file := range files {
+		go func(file os.FileInfo) {
+			wg.Add(1)
+			defer wg.Done()
+			appName := addPrefix(single, convertFromSourceToAppName(file.Name()))
+			name := addPrefix(single, file.Name())
+			cmd := exec.Command("gcc", "-o", appName, name)
+			var out bytes.Buffer
+			var stderr bytes.Buffer
+			cmd.Stdout = &out
+			cmd.Stderr = &stderr
+			err := cmd.Run()
+			///////////////////////
+			removeGCCfiles(single)
+			///////////////////////
+			cmd2 := exec.Command("gcc", "-o", "-std=gnu99", appName, name)
+			var out2 bytes.Buffer
+			var stderr2 bytes.Buffer
+			cmd2.Stdout = &out2
+			cmd2.Stderr = &stderr2
+			err2 := cmd2.Run()
+
+			if err != nil && err2 != nil {
+				m := fmt.Sprintf("=== MISTAKE =======\n")
+				m += fmt.Sprintf("Cannot compile by c2go file with name : %v\nApp name: %v\n Error: %v\nError: %v\n", name, appName, stderr.String(), stderr2.String())
+				chanMessage <- message{
+					errBody:  m,
+					fileName: name,
+				}
+			}
+		}(file)
+	}
+	wg.Wait()
+	close(chanMessage)
 	// Remove the gcc result
 	removeGCCfiles(single)
 
@@ -142,7 +166,7 @@ func main() {
 	removeGoFiles(single)
 
 	// Mistakes is not allowable
-	fmt.Println("Amount mistake source by gcc: ", mistakeSource)
+	fmt.Println("Amount mistake source by gcc: ", len(mistakeFilesGCC))
 	for _, m := range mistakeFilesGCC {
 		fmt.Println("\tMistake file : ", m)
 	}
