@@ -18,8 +18,10 @@ http://www.iu.hio.no/~mark/CTutorial/CTutorial.html
 | 24.06.2017 | 62 is Ok at 87 source c files |
 | 29.06.2017 | Added "comma" problem for FOR. 63 is Ok at 87 soure c files | 
 |   | File "factors1.c" is Ok |
-|   | File "sieve.c" have 1 error insteand of 2 |
+|   | File "sieve.c" have 1 error instand of 2 |
 | 03.07.2017 | Added "comma" problem for VARIABLES. 64 is Ok at 87 soure c files | 
+|   | File "fibo.c" is Ok |
+|   | File "counts.c" have 1 error instand of 3 |
 
 
 ## Present list of mistake files
