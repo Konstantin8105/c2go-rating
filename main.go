@@ -38,7 +38,7 @@ func removeGCCfiles(folderName string) {
 			// Remove application
 			err := os.Remove(addPrefix(single, file.Name()))
 			if err != nil {
-				panic(fmt.Errorf("cannot remove file: %v", addPrefix(folderName, file.Name())))
+				panic(fmt.Errorf("cannot remove file: %v, %v", addPrefix(folderName, file.Name()), err))
 			}
 		}
 	}
@@ -51,7 +51,7 @@ func removeGoFiles(folderName string) {
 			// Remove go files
 			err := os.Remove(addPrefix(single, file.Name()))
 			if err != nil {
-				panic(fmt.Errorf("cannot remove file: %v", addPrefix(folderName, file.Name())))
+				panic(fmt.Errorf("cannot remove file: %v", addPrefix(folderName, file.Name()), err))
 			}
 		}
 	}
