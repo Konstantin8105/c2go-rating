@@ -18,6 +18,7 @@ http://www.iu.hio.no/~mark/CTutorial/CTutorial.html
 | 24.06.2017 | 62 is Ok at 87 source c files |
 | 29.06.2017 | Added "comma" problem for FOR. 63 is Ok at 87 soure c files | 
 |   | File "factors1.c" is Ok |
+|   | file "sieve.c" have 1 error insteand of 2 |
 
 
 ## Present list of mistake files
