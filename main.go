@@ -104,7 +104,7 @@ func main() {
 		cmd2.Stderr = &stderr2
 		err2 := cmd2.Run()
 
-		if err != nil || err2 != nil {
+		if err != nil && err2 != nil {
 			m := fmt.Sprintf("=== MISTAKE =======\n")
 			m += fmt.Sprintf("Cannot compile by gcc file with name : %v\nApp name: %v\n Error: %v\nError: %v\n", name, appName, stderr.String(), stderr2.String())
 			fmt.Println(m)
