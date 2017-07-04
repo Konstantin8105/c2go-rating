@@ -91,24 +91,37 @@ func main() {
 	for _, file := range files {
 		appName := convertFromSourceToAppName(file)
 		name := file
-		cmd := exec.Command("gcc", "-o", appName, name)
-		var out bytes.Buffer
-		var stderr bytes.Buffer
-		cmd.Stdout = &out
-		cmd.Stderr = &stderr
-		err := cmd.Run()
-		cmd2 := exec.Command("gcc", "-o", "-std=gnu99", appName, name)
-		var out2 bytes.Buffer
-		var stderr2 bytes.Buffer
-		cmd2.Stdout = &out2
-		cmd2.Stderr = &stderr2
-		err2 := cmd2.Run()
-
-		if err != nil && err2 != nil {
-			m := fmt.Sprintf("=== MISTAKE =======\n")
-			m += fmt.Sprintf("Cannot compile by gcc file with name : %v\nApp name: %v\n Error: %v\nError: %v\n", name, appName, stderr.String(), stderr2.String())
-			fmt.Println(m)
-			mistakeFilesGCC = append(mistakeFilesGCC, file)
+		{
+			cmd := exec.Command("gcc", "-o", appName, name)
+			var out bytes.Buffer
+			var stderr bytes.Buffer
+			cmd.Stdout = &out
+			cmd.Stderr = &stderr
+			err := cmd.Run()
+			if err != nil {
+				fmt.Println("=== MISTAKE IN GCC ===")
+				fmt.Printf("Cannot compile by gcc file with name : %v\n", name)
+				fmt.Printf("App name                             : %v\n", appName)
+				fmt.Printf("Error                                : %v\n", stderr.String())
+				mistakeFilesGCC = append(mistakeFilesGCC, file)
+			} else {
+				continue
+			}
+		}
+		{
+			cmd := exec.Command("gcc", "-o", "-std=gnu99", appName, name)
+			var out bytes.Buffer
+			var stderr bytes.Buffer
+			cmd.Stdout = &out
+			cmd.Stderr = &stderr
+			err := cmd.Run()
+			if err != nil {
+				fmt.Println("=== MISTAKE IN GCC WITH STD=GNU99 ===")
+				fmt.Printf("Cannot compile by gcc file with name : %v\n", name)
+				fmt.Printf("App name                             : %v\n", appName)
+				fmt.Printf("Error                                : %v\n", stderr.String())
+				mistakeFilesGCC = append(mistakeFilesGCC, file)
+			}
 		}
 	}
 
@@ -119,12 +132,15 @@ func main() {
 	}
 
 	// Transpiling by c2go
-	var mistakeC2Go int
-	var mistakeFilesC2GO []string
-	var errC2GO []string
+	type result struct {
+		fileName string
+		err      string
+	}
+	var results []result
 	for _, file := range files {
 		goName := convertFromSourceToAppName(file) + ".go"
 		name := file
+
 		cmd := exec.Command(c2go, transpile, "-o", goName, name)
 		var out bytes.Buffer
 		var stderr bytes.Buffer
@@ -134,11 +150,12 @@ func main() {
 		if err != nil {
 			s := fmt.Sprintf("Command : clang %v -o %v %v\n", transpile, goName, name)
 			s += fmt.Sprintf("Cannot compile by c2go file with name : %v\nGo name : %v\nError: %v\n\n", name, goName, stderr.String())
-			mistakeC2Go++
-			fmt.Printf("=== MISTAKE : %v =======\n", mistakeC2Go)
+			results = append(results, result{
+				fileName: name,
+				err:      stderr.String(),
+			})
+			fmt.Printf("=== MISTAKE : %v =======\n", len(results))
 			fmt.Println(s)
-			mistakeFilesC2GO = append(mistakeFilesC2GO, name)
-			errC2GO = append(errC2GO, stderr.String())
 		}
 	}
 
@@ -148,12 +165,12 @@ func main() {
 		fmt.Println("\tMistake file : ", m)
 	}
 	// Calculate rating
-	fmt.Println("Amount mistake c2go results: ", mistakeC2Go)
-	for i, m := range mistakeFilesC2GO {
-		fmt.Println("\tMistake file : ", m)
-		fmt.Println("\tError: ", strings.Split(errC2GO[i], "\n")[0])
+	fmt.Println("Amount mistake c2go results: ", len(results))
+	for _, r := range results {
+		fmt.Println("\tMistake file : ", r.fileName)
+		fmt.Println("\tError: ", strings.Split(r.err, "\n")[0])
 	}
-	fmt.Printf("Result: %v is Ok at %v source c files - %.5v procent. \n", len(files)-mistakeC2Go, len(files), float64(len(files)-mistakeC2Go)/float64(len(files))*100.0)
+	fmt.Printf("Result: %v is Ok at %v source c files - %.5v procent. \n", len(files)-len(results), len(files), float64(len(files)-len(results))/float64(len(files))*100.0)
 
 	// multifile checking
 	// main files:
