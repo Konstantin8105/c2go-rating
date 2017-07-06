@@ -5,6 +5,7 @@ C code base:
 * https://cis.temple.edu/~giorgio/cis71/code/
 * http://www.iu.hio.no/~mark/CTutorial/CTutorial.html
 * https://www.cs.cmu.edu/~quake/triangle.html
+* http://www.sqlite.org/cgi/src/doc/trunk/README.md
 
 ## Instruction
 1.	go get -u github.com/Konstantin8105/c2go-rating
