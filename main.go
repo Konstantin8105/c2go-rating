@@ -90,6 +90,11 @@ func gccExecution(file string) error {
 	return fmt.Errorf("Cannot compile by GCC")
 }
 
+type result struct {
+	fileName string
+	err      string
+}
+
 func main() {
 
 	// Checking applications and folders
@@ -143,10 +148,6 @@ func main() {
 		}
 
 		// Transpiling by c2go
-		type result struct {
-			fileName string
-			err      string
-		}
 		var results []result
 		for _, file := range files {
 			goName := convertFromSourceToAppName(file) + ".go"
@@ -220,6 +221,7 @@ func main() {
 			panic(fmt.Errorf("Error: %v", err))
 		}
 
+		var results []result
 		for _, file := range files {
 			goName := convertFromSourceToAppName(file) + ".go"
 			name := file
@@ -233,11 +235,21 @@ func main() {
 			if err != nil {
 				s := fmt.Sprintf("Command : c2go %v -o %v %v\n", transpile, goName, name)
 				s += fmt.Sprintf("Cannot compile by c2go file with name : %v\nGo name : %v\nError: %v\n\n", name, goName, stderr.String())
+				results = append(results, result{
+					fileName: name,
+					err:      stderr.String(),
+				})
 				fmt.Printf("=== MISTAKE ===\n")
 				fmt.Println(s)
-
 			}
 		}
+		// Calculate rating
+		fmt.Println("Amount mistake c2go results: ", len(results))
+		for _, r := range results {
+			fmt.Println("\tMistake file : ", r.fileName)
+			fmt.Println("\tError: ", strings.Split(r.err, "\n")[0])
+		}
+		fmt.Printf("Result: %v is Ok at %v source c files - %.5v procent. \n", len(files)-len(results), len(files), float64(len(files)-len(results))/float64(len(files))*100.0)
 	}
 
 	// multifile checking

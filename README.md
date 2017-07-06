@@ -88,22 +88,12 @@ Result: 64 is Ok at 88 source c files - 72.727 procent.
 =*=
 =*=
 =*=
-=*=
-=*=
-=*=
-=*=
-=*=
 Analising : SQLITE
 
-=== MISTAKE ===
-Command : clang transpile -o sqlite/shell.go sqlite/shell.c
-Cannot compile by c2go file with name : sqlite/shell.c
-Go name : sqlite/shell.go
-Error: panic: unknown node type: 'IndirectFieldDecl 0x2be19a8 <line:167:25> col:25 implicit fpstate 'struct _fpstate *''
-
-=== MISTAKE ===
-Command : clang transpile -o sqlite/sqlite3.go sqlite/sqlite3.c
-Cannot compile by c2go file with name : sqlite/sqlite3.c
-Go name : sqlite/sqlite3.go
-Error: panic: interface conversion: interface {} is nil, not string
+Amount mistake c2go results:  2
+	Mistake file :  sqlite/shell.c
+	Error:  panic: unknown node type: 'IndirectFieldDecl 0x36bd9a8 <line:167:25> col:25 implicit fpstate 'struct _fpstate *''
+	Mistake file :  sqlite/sqlite3.c
+	Error:  panic: interface conversion: interface {} is nil, not string
+Result: 0 is Ok at 2 source c files - 0 procent. 
 ```
