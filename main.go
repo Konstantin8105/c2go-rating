@@ -13,10 +13,10 @@ import (
 const (
 	// Folder with C code execute file
 	// one file - one application
-	single string = "./SingleCcode/"
+	singleFolder string = "./SingleCcode/"
 
-	// one file - one application
-	triangle string = "./triangle"
+	// file sqlite for testing
+	sqliteFolder string = "./sqlite/"
 
 	// c2go application name
 	c2go string = "./c2go"
@@ -92,94 +92,110 @@ func gccExecution(file string) error {
 
 func main() {
 
-	// c2go must exist
+	// Checking applications and folders
+	// for start the checking
 	_, err := os.Stat(c2go)
 	if err != nil {
-		panic(fmt.Errorf("Application c2go is not found"))
+		panic(fmt.Errorf("application c2go is not found"))
 	}
 
-	// Remove Go files
-	removeGoFiles(single)
-	defer removeGoFiles(single)
-
-	// Remove the gcc result
-	removeGCCfiles(single)
-	defer removeGCCfiles(single)
-
-	// Single Application
-
-	// Get all files
-	files, err := filepath.Glob(single + "*.c")
+	_, err = os.Stat(singleFolder)
 	if err != nil {
-		panic(fmt.Errorf("Error: %v", err))
-	}
-	fmt.Println("List of files:")
-	for _, file := range files {
-		fmt.Printf("%v ", file)
-	}
-	fmt.Println("")
-	fmt.Println("Amount of files : ", len(files))
-
-	// Check in gcc
-	// example: gcc -o hello hello.c
-	var mistakeFilesGCC []string
-	for _, file := range files {
-		if err := gccExecution(file); err != nil {
-			mistakeFilesGCC = append(mistakeFilesGCC, file)
-		}
+		panic(fmt.Errorf("folder %v is not found", singleFolder))
 	}
 
-	// Transpiling by c2go
-	type result struct {
-		fileName string
-		err      string
+	_, err = os.Stat(sqliteFolder)
+	if err != nil {
+		panic(fmt.Errorf("folder %v is not found", sqliteFolder))
 	}
-	var results []result
-	for _, file := range files {
-		goName := convertFromSourceToAppName(file) + ".go"
-		name := file
 
-		cmd := exec.Command(c2go, transpile, "-o", goName, name)
-		var out bytes.Buffer
-		var stderr bytes.Buffer
-		cmd.Stdout = &out
-		cmd.Stderr = &stderr
-		err := cmd.Run()
+	// Single file C source code
+	{
+		// Remove Go files
+		removeGoFiles(singleFolder)
+		defer removeGoFiles(singleFolder)
+
+		// Remove the gcc result
+		removeGCCfiles(singleFolder)
+		defer removeGCCfiles(singleFolder)
+
+		// Single Application
+
+		// Get all files
+		files, err := filepath.Glob(singleFolder + "*.c")
 		if err != nil {
-			s := fmt.Sprintf("Command : clang %v -o %v %v\n", transpile, goName, name)
-			s += fmt.Sprintf("Cannot compile by c2go file with name : %v\nGo name : %v\nError: %v\n\n", name, goName, stderr.String())
-			results = append(results, result{
-				fileName: name,
-				err:      stderr.String(),
-			})
-			fmt.Printf("=== MISTAKE : %v =======\n", len(results))
-			fmt.Println(s)
+			panic(fmt.Errorf("Error: %v", err))
 		}
-	}
+		fmt.Println("List of files:")
+		for _, file := range files {
+			fmt.Printf("%v ", file)
+		}
+		fmt.Println("")
+		fmt.Println("Amount of files : ", len(files))
 
-	// Mistakes is not allowable
-	fmt.Println("Amount mistake source by gcc: ", len(mistakeFilesGCC))
-	for _, m := range mistakeFilesGCC {
-		fmt.Println("\tMistake file : ", m)
-	}
-	// Calculate rating
-	fmt.Println("Amount mistake c2go results: ", len(results))
-	for _, r := range results {
-		fmt.Println("\tMistake file : ", r.fileName)
-		fmt.Println("\tError: ", strings.Split(r.err, "\n")[0])
-	}
-	fmt.Printf("Result: %v is Ok at %v source c files - %.5v procent. \n", len(files)-len(results), len(files), float64(len(files)-len(results))/float64(len(files))*100.0)
+		// Check in gcc
+		// example: gcc -o hello hello.c
+		var mistakeFilesGCC []string
+		for _, file := range files {
+			if err := gccExecution(file); err != nil {
+				mistakeFilesGCC = append(mistakeFilesGCC, file)
+			}
+		}
 
+		// Transpiling by c2go
+		type result struct {
+			fileName string
+			err      string
+		}
+		var results []result
+		for _, file := range files {
+			goName := convertFromSourceToAppName(file) + ".go"
+			name := file
+
+			cmd := exec.Command(c2go, transpile, "-o", goName, name)
+			var out bytes.Buffer
+			var stderr bytes.Buffer
+			cmd.Stdout = &out
+			cmd.Stderr = &stderr
+			err := cmd.Run()
+			if err != nil {
+				s := fmt.Sprintf("Command : clang %v -o %v %v\n", transpile, goName, name)
+				s += fmt.Sprintf("Cannot compile by c2go file with name : %v\nGo name : %v\nError: %v\n\n", name, goName, stderr.String())
+				results = append(results, result{
+					fileName: name,
+					err:      stderr.String(),
+				})
+				fmt.Printf("=== MISTAKE : %v =======\n", len(results))
+				fmt.Println(s)
+			}
+		}
+
+		// Mistakes is not allowable
+		fmt.Println("Amount mistake source by gcc: ", len(mistakeFilesGCC))
+		for _, m := range mistakeFilesGCC {
+			fmt.Println("\tMistake file : ", m)
+		}
+		// Calculate rating
+		fmt.Println("Amount mistake c2go results: ", len(results))
+		for _, r := range results {
+			fmt.Println("\tMistake file : ", r.fileName)
+			fmt.Println("\tError: ", strings.Split(r.err, "\n")[0])
+		}
+		fmt.Printf("Result: %v is Ok at %v source c files - %.5v procent. \n", len(files)-len(results), len(files), float64(len(files)-len(results))/float64(len(files))*100.0)
+	}
+	{
+		// sqlite
+		// gcc -pthread  *.c -ldl
+
+		// Remove Go files
+		removeGoFiles(sqliteFolder)
+		defer removeGoFiles(sqliteFolder)
+
+		// Remove the gcc result
+		removeGCCfiles(sqliteFolder)
+		defer removeGCCfiles(sqliteFolder)
+	}
 	// triangle
-
-	// Remove Go files
-	removeGoFiles(triangle)
-	defer removeGoFiles(triangle)
-
-	// Remove the gcc result
-	removeGCCfiles(triangle)
-	defer removeGCCfiles(triangle)
-
 	// multifile checking
 	// main files:
 	// studentlistmain.c  queue.h queue.c
