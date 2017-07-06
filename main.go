@@ -159,7 +159,7 @@ func main() {
 			cmd.Stderr = &stderr
 			err := cmd.Run()
 			if err != nil {
-				s := fmt.Sprintf("Command : clang %v -o %v %v\n", transpile, goName, name)
+				s := fmt.Sprintf("Command : c2go %v -o %v %v\n", transpile, goName, name)
 				s += fmt.Sprintf("Cannot compile by c2go file with name : %v\nGo name : %v\nError: %v\n\n", name, goName, stderr.String())
 				results = append(results, result{
 					fileName: name,
@@ -231,7 +231,7 @@ func main() {
 			cmd.Stderr = &stderr
 			err := cmd.Run()
 			if err != nil {
-				s := fmt.Sprintf("Command : clang %v -o %v %v\n", transpile, goName, name)
+				s := fmt.Sprintf("Command : c2go %v -o %v %v\n", transpile, goName, name)
 				s += fmt.Sprintf("Cannot compile by c2go file with name : %v\nGo name : %v\nError: %v\n\n", name, goName, stderr.String())
 				fmt.Printf("=== MISTAKE ===\n")
 				fmt.Println(s)
