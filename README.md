@@ -23,7 +23,7 @@ http://www.iu.hio.no/~mark/CTutorial/CTutorial.html
 |   | File "fibo.c" is Ok |
 |   | File "counts.c" have 1 error instand of 3 |
 | 06.07.2017 | Add new file "triangle.c" |
-|   |  |
+|   | 64 is Ok at 88 source c files |
 
 
 ## Present list of mistake files
