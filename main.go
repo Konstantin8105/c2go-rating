@@ -15,6 +15,9 @@ const (
 	// one file - one application
 	single string = "./SingleCcode/"
 
+	// one file - one application
+	triangle string = "./triangle"
+
 	// c2go application name
 	c2go string = "./c2go"
 
@@ -26,15 +29,15 @@ func convertFromSourceToAppName(sourceName string) string {
 	return sourceName[0:(len(sourceName) - len(filepath.Ext(sourceName)))]
 }
 
-func removeGCCfiles() {
-	files, _ := ioutil.ReadDir(single)
+func removeGCCfiles(folder string) {
+	files, _ := ioutil.ReadDir(folder)
 	for _, file := range files {
 		if file.IsDir() {
 			continue
 		}
 		if filepath.Ext(file.Name()) == "" || filepath.Ext(file.Name()) == ".exe" {
 			// Remove application
-			fileName := single + file.Name()
+			fileName := folder + file.Name()
 			err := os.Remove(fileName)
 			if err != nil {
 				panic(fmt.Errorf("cannot remove file of gcc: %v, %v", file.Name(), err))
@@ -43,15 +46,15 @@ func removeGCCfiles() {
 	}
 }
 
-func removeGoFiles() {
-	files, _ := ioutil.ReadDir(single)
+func removeGoFiles(folder string) {
+	files, _ := ioutil.ReadDir(folder)
 	for _, file := range files {
 		if file.IsDir() {
 			continue
 		}
 		if filepath.Ext(file.Name()) == ".go" {
 			// Remove go files
-			fileName := single + file.Name()
+			fileName := folder + file.Name()
 			err := os.Remove(fileName)
 			if err != nil {
 				panic(fmt.Errorf("cannot remove file of Go: %v, %v", file.Name(), err))
@@ -60,17 +63,50 @@ func removeGoFiles() {
 	}
 }
 
+func gccExecution(file string) error {
+	appName := convertFromSourceToAppName(file)
+	name := file
+	args := [][]string{
+		[]string{"-o", appName, name},
+		[]string{"-O", "-o", appName, name, "-lm"},
+	}
+	for _, arg := range args {
+		cmd := exec.Command("gcc", arg...)
+		var out bytes.Buffer
+		var stderr bytes.Buffer
+		cmd.Stdout = &out
+		cmd.Stderr = &stderr
+		err := cmd.Run()
+		if err != nil {
+			fmt.Println("=== MISTAKE IN GCC ===")
+			fmt.Printf("Cannot compile by gcc file : %v\n", name)
+			fmt.Printf("Arguments for compile      : %v\n", arg)
+			fmt.Printf("App name                   : %v\n", appName)
+			fmt.Printf("Error                      : %v\n", stderr.String())
+			continue
+		}
+		return nil
+	}
+	return fmt.Errorf("Cannot compile by GCC")
+}
+
 func main() {
 
-	// Single Application
+	// c2go must exist
+	_, err := os.Stat(c2go)
+	if err != nil {
+		panic(fmt.Errorf("Application c2go is not found"))
+	}
 
 	// Remove Go files
-	removeGoFiles()
-	defer removeGoFiles()
+	removeGoFiles(single)
+	defer removeGoFiles(single)
 
 	// Remove the gcc result
-	removeGCCfiles()
-	defer removeGCCfiles()
+	removeGCCfiles(single)
+	defer removeGCCfiles(single)
+
+	// Single Application
 
 	// Get all files
 	files, err := filepath.Glob(single + "*.c")
@@ -87,48 +123,10 @@ func main() {
 	// Check in gcc
 	// example: gcc -o hello hello.c
 	var mistakeFilesGCC []string
-
 	for _, file := range files {
-		appName := convertFromSourceToAppName(file)
-		name := file
-		{
-			cmd := exec.Command("gcc", "-o", appName, name)
-			var out bytes.Buffer
-			var stderr bytes.Buffer
-			cmd.Stdout = &out
-			cmd.Stderr = &stderr
-			err := cmd.Run()
-			if err != nil {
-				fmt.Println("=== MISTAKE IN GCC ===")
-				fmt.Printf("Cannot compile by gcc file with name : %v\n", name)
-				fmt.Printf("App name                             : %v\n", appName)
-				fmt.Printf("Error                                : %v\n", stderr.String())
-				mistakeFilesGCC = append(mistakeFilesGCC, file)
-			} else {
-				continue
-			}
+		if err := gccExecution(file); err != nil {
+			mistakeFilesGCC = append(mistakeFilesGCC, file)
 		}
-		{
-			cmd := exec.Command("gcc", "-o", "-std=gnu99", appName, name)
-			var out bytes.Buffer
-			var stderr bytes.Buffer
-			cmd.Stdout = &out
-			cmd.Stderr = &stderr
-			err := cmd.Run()
-			if err != nil {
-				fmt.Println("=== MISTAKE IN GCC WITH STD=GNU99 ===")
-				fmt.Printf("Cannot compile by gcc file with name : %v\n", name)
-				fmt.Printf("App name                             : %v\n", appName)
-				fmt.Printf("Error                                : %v\n", stderr.String())
-				mistakeFilesGCC = append(mistakeFilesGCC, file)
-			}
-		}
-	}
-
-	// c2go must exist
-	_, err = os.Stat(c2go)
-	if err != nil {
-		panic(fmt.Errorf("Application c2go is not found"))
 	}
 
 	// Transpiling by c2go
@@ -172,9 +170,18 @@ func main() {
 	}
 	fmt.Printf("Result: %v is Ok at %v source c files - %.5v procent. \n", len(files)-len(results), len(files), float64(len(files)-len(results))/float64(len(files))*100.0)
 
+	// triangle
+
+	// Remove Go files
+	removeGoFiles(triangle)
+	defer removeGoFiles(triangle)
+
+	// Remove the gcc result
+	removeGCCfiles(triangle)
+	defer removeGCCfiles(triangle)
+
 	// multifile checking
 	// main files:
 	// studentlistmain.c  queue.h queue.c
 	// selectionMain.c intArray.h intArray.c
-	// triangle....
 }
