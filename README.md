@@ -25,6 +25,7 @@ C code base:
 |   | File "counts.c" have 1 error instand of 3 |
 | 06.07.2017 | Add new file "triangle.c" |
 |   | 64 is Ok at 88 source c files |
+| 06.07.2017 | Add analising of sqlite source code |
 
 
 ## Present list of mistake files
@@ -81,4 +82,27 @@ Amount mistake c2go results:  24
 	Mistake file :  SingleCcode/triangle.c
 	Error:  panic: invalid identity: 'Insertvertexresult ()ToFlipstacker'
 Result: 64 is Ok at 88 source c files - 72.727 procent. 
+=*=
+=*=
+=*=
+=*=
+=*=
+=*=
+=*=
+=*=
+=*=
+=*=
+Analising : SQLITE
+
+=== MISTAKE ===
+Command : clang transpile -o sqlite/shell.go sqlite/shell.c
+Cannot compile by c2go file with name : sqlite/shell.c
+Go name : sqlite/shell.go
+Error: panic: unknown node type: 'IndirectFieldDecl 0x2be19a8 <line:167:25> col:25 implicit fpstate 'struct _fpstate *''
+
+=== MISTAKE ===
+Command : clang transpile -o sqlite/sqlite3.go sqlite/sqlite3.c
+Cannot compile by c2go file with name : sqlite/sqlite3.c
+Go name : sqlite/sqlite3.go
+Error: panic: interface conversion: interface {} is nil, not string
 ```
