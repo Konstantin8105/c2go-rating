@@ -8,9 +8,13 @@ C code base:
 * http://www.sqlite.org/cgi/src/doc/trunk/README.md
 
 ## Instruction
+
+Now, that software checked only on linux system and may be not work on Win, Darwin.
+
 1.	go get -u github.com/Konstantin8105/c2go-rating
-2.	copy folder from $GOPATH/src/github.com/Konstantin8105/c2go-rating/SingleCcode to $GOPATH/bin
-3.	run `./c2go-rating`
+2.	copy folders from $GOPATH/src/github.com/Konstantin8105/c2go-rating/SingleCcode to $GOPATH/bin
+3.	copy folders from $GOPATH/src/github.com/Konstantin8105/c2go-rating/sqlite to $GOPATH/bin
+4.	run `./c2go-rating`
 
 ## Table with results
 
