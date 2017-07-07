@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -27,67 +26,6 @@ const (
 
 func convertFromSourceToAppName(sourceName string) string {
 	return sourceName[0:(len(sourceName) - len(filepath.Ext(sourceName)))]
-}
-
-func removeGCCfiles(folder string) {
-	files, _ := ioutil.ReadDir(folder)
-	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-		if filepath.Ext(file.Name()) == "" || filepath.Ext(file.Name()) == ".exe" {
-			// Remove application
-			fileName := folder + file.Name()
-			err := os.Remove(fileName)
-			if err != nil {
-				panic(fmt.Errorf("cannot remove file of gcc: %v, %v", file.Name(), err))
-			}
-		}
-	}
-}
-
-func removeGoFiles(folder string) {
-	files, _ := ioutil.ReadDir(folder)
-	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-		if filepath.Ext(file.Name()) == ".go" {
-			// Remove go files
-			fileName := folder + file.Name()
-			err := os.Remove(fileName)
-			if err != nil {
-				panic(fmt.Errorf("cannot remove file of Go: %v, %v", file.Name(), err))
-			}
-		}
-	}
-}
-
-func gccExecution(file string) error {
-	appName := convertFromSourceToAppName(file)
-	name := file
-	args := [][]string{
-		[]string{"-o", appName, name},
-		[]string{"-O", "-o", appName, name, "-lm"},
-	}
-	for _, arg := range args {
-		cmd := exec.Command("gcc", arg...)
-		var out bytes.Buffer
-		var stderr bytes.Buffer
-		cmd.Stdout = &out
-		cmd.Stderr = &stderr
-		err := cmd.Run()
-		if err != nil {
-			fmt.Println("=== MISTAKE IN GCC ===")
-			fmt.Printf("Cannot compile by gcc file : %v\n", name)
-			fmt.Printf("Arguments for compile      : %v\n", arg)
-			fmt.Printf("App name                   : %v\n", appName)
-			fmt.Printf("Error                      : %v\n", stderr.String())
-			continue
-		}
-		return nil
-	}
-	return fmt.Errorf("Cannot compile by GCC")
 }
 
 type result struct {
