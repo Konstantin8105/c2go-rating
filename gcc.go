@@ -6,29 +6,31 @@ import (
 	"os/exec"
 )
 
-func gccExecution(file string) error {
-	appName := convertFromSourceToAppName(file)
-	name := file
-	args := [][]string{
-		[]string{"-o", appName, name},
-		[]string{"-O", "-o", appName, name, "-lm"},
+func gccExecution(appName string, files ...string) error {
+	argTemplates := [][]string{
+		[]string{"-o", appName, "<files>"},
+		[]string{"-O", "-o", appName, "<files>", "-lm"},
+		[]string{"-o", appName, "<files>", "-pthread", "-ldl"},
 	}
-	for _, arg := range args {
+	err := make([]error, len(argTemplates))
+	for i, template := range argTemplates {
+		var arg []string
+		for _, tt := range template {
+			if tt == "<files>" {
+				arg = append(arg, files...)
+			} else {
+				arg = append(arg, tt)
+			}
+		}
 		cmd := exec.Command("gcc", arg...)
 		var out bytes.Buffer
 		var stderr bytes.Buffer
 		cmd.Stdout = &out
 		cmd.Stderr = &stderr
-		err := cmd.Run()
-		if err != nil {
-			fmt.Println("=== MISTAKE IN GCC ===")
-			fmt.Printf("Cannot compile by gcc file : %v\n", name)
-			fmt.Printf("Arguments for compile      : %v\n", arg)
-			fmt.Printf("App name                   : %v\n", appName)
-			fmt.Printf("Error                      : %v\n", stderr.String())
+		if err[i] = cmd.Run(); err[i] != nil {
 			continue
 		}
 		return nil
 	}
-	return fmt.Errorf("Cannot compile by GCC")
+	return fmt.Errorf("Cannot compile by GCC.\nAppname = %v.\nFiles = %v\nErrors = %v", appName, files, err)
 }

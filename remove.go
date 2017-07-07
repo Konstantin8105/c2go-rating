@@ -8,12 +8,12 @@ import (
 )
 
 func removeGCCfiles(folder string) {
-	removeTempFiles(".exe")
-	removeTempFiles("")
+	removeTempFiles(folder, ".exe")
+	removeTempFiles(folder, "")
 }
 
 func removeGoFiles(folder string) {
-	removeTempFiles(".go")
+	removeTempFiles(folder, ".go")
 }
 
 func removeTempFiles(folder string, extension string) {

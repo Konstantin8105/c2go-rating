@@ -26,14 +26,15 @@ C code base:
 |   | File "counts.c" have 1 error instand of 3 |
 | 06.07.2017 | Add new file "triangle.c" |
 |   | 64 is Ok at 88 source c files |
-| 06.07.2017 | Add analising of sqlite source code |
+| 06.07.2017 | Add analising of 2 sqlite source code |
+|   | 64 is Ok at 90 source c files |
 
 
 ## Present list of mistake files
 
 ```
 Amount mistake source by gcc:  0
-Amount mistake c2go results:  24
+Amount mistake c2go results:  26
 	Mistake file :  SingleCcode/17-2.c
 	Error:  panic: format.Node internal error (107:10: expected '==', found '=')
 	Mistake file :  SingleCcode/19.c
@@ -41,9 +42,9 @@ Amount mistake c2go results:  24
 	Mistake file :  SingleCcode/20.c
 	Error:  panic: format.Node internal error (112:35: missing ',' in argument list)
 	Mistake file :  SingleCcode/27.c
-	Error:  panic: (*ast.FunctionDecl) (0x5835c0,0xc4202dc480)
+	Error:  panic: (*ast.FunctionDecl) (0x5835c0,0xc4200ad580)
 	Mistake file :  SingleCcode/31.c
-	Error:  panic: (*ast.FunctionDecl) (0x5835c0,0xc4203e7380)
+	Error:  panic: (*ast.FunctionDecl) (0x5835c0,0xc4200fd380)
 	Mistake file :  SingleCcode/array2.c
 	Error:  panic: format.Node internal error (121:42: expected ']', found '+=' (and 10 more errors))
 	Mistake file :  SingleCcode/bubble.c
@@ -82,18 +83,9 @@ Amount mistake c2go results:  24
 	Error:  panic: format.Node internal error (118:9: expected '==', found '=' (and 1 more errors))
 	Mistake file :  SingleCcode/triangle.c
 	Error:  panic: invalid identity: 'Insertvertexresult ()ToFlipstacker'
-Result: 64 is Ok at 88 source c files - 72.727 procent. 
-=*=
-=*=
-=*=
-=*=
-=*=
-Analising : SQLITE
-
-Amount mistake c2go results:  2
 	Mistake file :  sqlite/shell.c
-	Error:  panic: unknown node type: 'IndirectFieldDecl 0x36bd9a8 <line:167:25> col:25 implicit fpstate 'struct _fpstate *''
+	Error:  panic: unknown node type: 'IndirectFieldDecl 0x31339a8 <line:167:25> col:25 implicit fpstate 'struct _fpstate *''
 	Mistake file :  sqlite/sqlite3.c
 	Error:  panic: interface conversion: interface {} is nil, not string
-Result: 0 is Ok at 2 source c files - 0 procent. 
+Result: 64 is Ok at 90 source c files - 71.111 procent. 
 ```
