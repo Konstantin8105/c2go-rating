@@ -12,14 +12,11 @@ const (
 	// one file - one application
 	singleFolder string = "./SingleCcode/"
 
-	// file sqlite for testing
+	// Folder with sqlite files for testing
 	sqliteFolder string = "./sqlite/"
 
 	// c2go application name
 	c2go string = "./c2go"
-
-	// transpile flag for c2go
-	transpile string = "transpile"
 )
 
 func convertFromSourceToAppName(sourceName string) string {
@@ -59,8 +56,10 @@ func main() {
 	// Amount C source codes in c2go
 	var countFiles int
 
-	// Single file C source code
 	{
+		// Single file C source code
+		fmt.Println("Analising : Single C source codes")
+
 		// Remove Go files
 		removeGoFiles(singleFolder)
 		defer removeGoFiles(singleFolder)
@@ -68,8 +67,6 @@ func main() {
 		// Remove the gcc result
 		removeGCCfiles(singleFolder)
 		defer removeGCCfiles(singleFolder)
-
-		// Single Application
 
 		// Get all files
 		files, err := filepath.Glob(singleFolder + "*.c")
@@ -103,7 +100,6 @@ func main() {
 	{
 		// sqlite
 		fmt.Println("Analising : SQLITE")
-		// gcc -pthread  *.c -ldl
 
 		// Remove Go files
 		removeGoFiles(sqliteFolder)
@@ -113,6 +109,7 @@ func main() {
 		removeGCCfiles(sqliteFolder)
 		defer removeGCCfiles(sqliteFolder)
 
+		// Get all files
 		files, err := filepath.Glob(sqliteFolder + "*.c")
 		if err != nil {
 			panic(fmt.Errorf("Error: %v", err))
@@ -126,6 +123,7 @@ func main() {
 			return
 		}
 
+		// Transpiling by c2go
 		for _, file := range files {
 			countFiles++
 			goFile := convertFromSourceToAppName(file) + ".go"
@@ -137,11 +135,6 @@ func main() {
 			}
 		}
 	}
-
-	// multifile checking
-	// main files:
-	// studentlistmain.c  queue.h queue.c
-	// selectionMain.c intArray.h intArray.c
 
 	// Mistakes is not allowable
 	fmt.Println("Amount mistake source by gcc: ", len(mistakeFilesGCC))
