@@ -34,13 +34,15 @@ Now, that software checked only on linux system and may be not work on Win, Darw
 |   | 64 is Ok at 90 source c files |
 | 08.07.2017 | No change |
 |   | 64 is Ok at 90 source c files |
+| 08.07.2017 | After rebase to upstream master c2go |
+|   | 65 is Ok at 90 source c files |
 
 
 ## Present list of mistake files
 
 ```
 Amount mistake source by gcc:  0
-Amount mistake c2go results:  26
+Amount mistake c2go results:  25
 	Mistake file :  SingleCcode/17-2.c
 	Error:  panic: format.Node internal error (107:10: expected '==', found '=')
 	Mistake file :  SingleCcode/19.c
@@ -48,9 +50,9 @@ Amount mistake c2go results:  26
 	Mistake file :  SingleCcode/20.c
 	Error:  panic: format.Node internal error (112:35: missing ',' in argument list)
 	Mistake file :  SingleCcode/27.c
-	Error:  panic: (*ast.FunctionDecl) (0x5835c0,0xc4204f6a80)
+	Error:  panic: (*ast.FunctionDecl) (0x5865c0,0xc42028d780)
 	Mistake file :  SingleCcode/31.c
-	Error:  panic: (*ast.FunctionDecl) (0x5835c0,0xc42029da80)
+	Error:  panic: (*ast.FunctionDecl) (0x5865c0,0xc420191f00)
 	Mistake file :  SingleCcode/array2.c
 	Error:  panic: format.Node internal error (121:42: expected ']', found '+=' (and 10 more errors))
 	Mistake file :  SingleCcode/bubble.c
@@ -58,13 +60,11 @@ Amount mistake c2go results:  26
 	Mistake file :  SingleCcode/clean.c
 	Error:  panic: format.Node internal error (115:9: expected '==', found '=' (and 1 more errors))
 	Mistake file :  SingleCcode/counts.c
-	Error:  panic: format.Node internal error (119:9: expected '==', found '=' (and 3 more errors))
+	Error:  panic: format.Node internal error (119:9: expected '==', found '=' (and 1 more errors))
 	Mistake file :  SingleCcode/cpfile.c
 	Error:  panic: format.Node internal error (234:10: expected '==', found '=' (and 2 more errors))
 	Mistake file :  SingleCcode/cpintarray.c
 	Error:  panic: format.Node internal error (104:6: expected ')', found '+=' (and 10 more errors))
-	Mistake file :  SingleCcode/fibo.c
-	Error:  panic: format.Node internal error (115:19: expected '==', found '=')
 	Mistake file :  SingleCcode/kilo.c
 	Error:  panic: invalid identity: 'Not[]erow'
 	Mistake file :  SingleCcode/linear.c
@@ -88,10 +88,10 @@ Amount mistake c2go results:  26
 	Mistake file :  SingleCcode/studentlist.c
 	Error:  panic: format.Node internal error (118:9: expected '==', found '=' (and 1 more errors))
 	Mistake file :  SingleCcode/triangle.c
-	Error:  panic: invalid identity: 'Insertvertexresult ()ToFlipstacker'
+	Error:  panic: interface conversion: ast.Node is *ast.MemberExpr, not *ast.DeclRefExpr
 	Mistake file :  sqlite/shell.c
-	Error:  panic: unknown node type: 'IndirectFieldDecl 0x3c789c8 <line:167:25> col:25 implicit fpstate 'struct _fpstate *''
+	Error:  panic: unknown node type: 'IndirectFieldDecl 0x2cc39c8 <line:167:25> col:25 implicit fpstate 'struct _fpstate *''
 	Mistake file :  sqlite/sqlite3.c
 	Error:  panic: interface conversion: interface {} is nil, not string
-Result: 64 is Ok at 90 source c files - 71.111 procent. 
+Result: 65 is Ok at 90 source c files - 72.222 procent. 
 ```
