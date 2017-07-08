@@ -145,7 +145,7 @@ func main() {
 	fmt.Println("Amount mistake c2go results: ", len(results))
 	for _, r := range results {
 		fmt.Println("\tMistake file : ", r.fileName)
-		fmt.Println("\tError: ", strings.Split(r.err.Error(), "\n")[0])
+		fmt.Println("\t\tError: ", strings.Split(r.err.Error(), "\n")[0])
 	}
 	fmt.Printf("Result: %v is Ok at %v source c files - %.5v procent. \n", countFiles-len(results), countFiles, float64(countFiles-len(results))/float64(countFiles)*100.0)
 }
