@@ -32,6 +32,8 @@ Now, that software checked only on linux system and may be not work on Win, Darw
 |   | 64 is Ok at 88 source c files |
 | 06.07.2017 | Add analising of 2 sqlite source code |
 |   | 64 is Ok at 90 source c files |
+| 08.07.2017 | No change |
+|   | 64 is Ok at 90 source c files |
 
 
 ## Present list of mistake files
@@ -46,9 +48,9 @@ Amount mistake c2go results:  26
 	Mistake file :  SingleCcode/20.c
 	Error:  panic: format.Node internal error (112:35: missing ',' in argument list)
 	Mistake file :  SingleCcode/27.c
-	Error:  panic: (*ast.FunctionDecl) (0x5835c0,0xc4200ad580)
+	Error:  panic: (*ast.FunctionDecl) (0x5835c0,0xc4204f6a80)
 	Mistake file :  SingleCcode/31.c
-	Error:  panic: (*ast.FunctionDecl) (0x5835c0,0xc4200fd380)
+	Error:  panic: (*ast.FunctionDecl) (0x5835c0,0xc42029da80)
 	Mistake file :  SingleCcode/array2.c
 	Error:  panic: format.Node internal error (121:42: expected ']', found '+=' (and 10 more errors))
 	Mistake file :  SingleCcode/bubble.c
@@ -88,7 +90,7 @@ Amount mistake c2go results:  26
 	Mistake file :  SingleCcode/triangle.c
 	Error:  panic: invalid identity: 'Insertvertexresult ()ToFlipstacker'
 	Mistake file :  sqlite/shell.c
-	Error:  panic: unknown node type: 'IndirectFieldDecl 0x31339a8 <line:167:25> col:25 implicit fpstate 'struct _fpstate *''
+	Error:  panic: unknown node type: 'IndirectFieldDecl 0x3c789c8 <line:167:25> col:25 implicit fpstate 'struct _fpstate *''
 	Mistake file :  sqlite/sqlite3.c
 	Error:  panic: interface conversion: interface {} is nil, not string
 Result: 64 is Ok at 90 source c files - 71.111 procent. 
