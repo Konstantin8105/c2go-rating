@@ -36,6 +36,8 @@ Now, that software checked only on linux system and may be not work on Win, Darw
 |   | 64 is Ok at 90 source c files |
 | 08.07.2017 | After rebase to upstream master c2go |
 |   | 65 is Ok at 90 source c files |
+|   | File 'counts.c' have 1 error instand of 3 |
+|   | File "fibo.c" is Ok |
 
 
 ## Present list of mistake files
