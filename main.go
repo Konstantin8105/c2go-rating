@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io"
+	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -160,17 +161,35 @@ func main() {
 	{
 		fmt.Println("GSL")
 		// Copy files *.c and *.h to GSL output folder
-		files, err := filepath.Glob(gslFolder + "*.c")
+		var files []string
+		getInternalDirectory(gslFolder, &files)
+		for _, file := range files {
+			if path.Ext(file) == ".c" || path.Ext(file) == ".h" {
+				ff := strings.Split(file, "/")
+				outputFile := gslOutput + ff[len(ff)-1]
+				copyFile(file, outputFile)
+			}
+		}
+
+		// Create config.h file
+
+		// Editing of includes
+
+		// Transpiling
+		filesC, err := filepath.Glob(gslOutput + "*.c")
 		if err != nil {
 			panic(fmt.Errorf("Error: %v", err))
 		}
-		fmt.Println("Files = ", files)
-		for _, file := range files {
-			outputFile := gslOutput + strings.Split(file, "/")[1]
-			fmt.Println("outputFile = ", outputFile)
-			copyFile(file, outputFile)
+		for _, ff := range filesC {
+			countFiles++
+			goFile := convertFromSourceToAppName(ff) + ".go"
+			if err := c2goTranspiling(ff, goFile); err != nil {
+				results = append(results, result{
+					fileName: ff,
+					err:      err,
+				})
+			}
 		}
-		// Create config.h file
 	}
 
 	// Mistakes is not allowable
@@ -187,51 +206,22 @@ func main() {
 	fmt.Printf("Result: %v is Ok at %v source c files - %.5v procent. \n", countFiles-len(results), countFiles, float64(countFiles-len(results))/float64(countFiles)*100.0)
 }
 
-// Copy - copy files
-func copyFile(inputFileName, outputFileName string) (err error) {
-
-	if len(inputFileName) == 0 {
-		return fmt.Errorf("inputFileName is zero: %s", inputFileName)
-	}
-
-	if len(outputFileName) == 0 {
-		return fmt.Errorf("inputFileName is zero: %s", outputFileName)
-	}
-
-	inputFile, err := os.Open(inputFileName)
+func getInternalDirectory(folder string, filesSummary *[]string) {
+	files, err := ioutil.ReadDir(folder)
 	if err != nil {
-		return err
+		panic(fmt.Errorf("cannot read dir %v", folder))
 	}
-	defer func() {
-		errFile := inputFile.Close()
-		if errFile != nil {
-			if err != nil {
-				err = fmt.Errorf("%v ; %v", err, errFile)
-			} else {
-				err = errFile
+	for _, file := range files {
+		if file.IsDir() {
+			var f []string
+			var folderName string = folder + file.Name() + "/"
+			getInternalDirectory(folderName, &f)
+			for i := range f {
+				f[i] = folderName + f[i]
 			}
+			*filesSummary = append(*filesSummary, f...)
+		} else {
+			*filesSummary = append(*filesSummary, file.Name())
 		}
-	}()
-
-	outputFile, err := os.Create(outputFileName)
-	if err != nil {
-		return err
 	}
-	defer func() {
-		errFile := outputFile.Close()
-		if errFile != nil {
-			if err != nil {
-				err = fmt.Errorf("%v ; %v", err, errFile)
-			} else {
-				err = errFile
-			}
-		}
-	}()
-
-	_, err = io.Copy(outputFile, inputFile)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
