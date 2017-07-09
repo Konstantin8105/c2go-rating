@@ -167,15 +167,32 @@ func main() {
 			if path.Ext(file) == ".c" || path.Ext(file) == ".h" {
 				ff := strings.Split(file, "/")
 				outputFile := gslOutput + ff[len(ff)-1]
-				copyFile(file, outputFile)
+				err := copyFile(file, outputFile)
+				if err != nil {
+					fmt.Println("File  = ", file)
+					fmt.Println("Out   = ", outputFile)
+					fmt.Println("Error = ", err)
+				}
 			}
 		}
 
 		// Create config.h file
-		copyFile(gslFolder+"config.h.in", gslOutput+"config.h")
+		err = copyFile(gslFolder+"config.h.in", gslOutput+"config.h")
+		if err != nil {
+			panic(err)
+		}
 		prepareConfig(gslOutput + "config.h")
 
 		// Editing of includes
+		filesAll, err := ioutil.ReadDir(gslOutput)
+		if err != nil {
+			panic(err)
+		}
+		for _, file := range filesAll {
+			fmt.Println("File : ", file.Name())
+			changeInclude(gslOutput + file.Name())
+		}
+		panic("dd")
 
 		// Transpiling
 		filesC, err := filepath.Glob(gslOutput + "*.c")
@@ -216,7 +233,7 @@ func getInternalDirectory(folder string, filesSummary *[]string) {
 	for _, file := range files {
 		if file.IsDir() {
 			var f []string
-			var folderName string = folder + file.Name() + "/"
+			folderName := folder + file.Name() + "/"
 			getInternalDirectory(folderName, &f)
 			for i := range f {
 				f[i] = folderName + f[i]
