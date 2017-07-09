@@ -172,6 +172,8 @@ func main() {
 		}
 
 		// Create config.h file
+		copyFile(gslFolder+"config.h.in", gslOutput+"config.h")
+		prepareConfig(gslOutput + "config.h")
 
 		// Editing of includes
 
