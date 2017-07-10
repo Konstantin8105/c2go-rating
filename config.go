@@ -20,6 +20,7 @@ var com = []string{
 }
 
 // TODO : add other
+// TODO : create like filter
 func prepareConfig(configFileName string) {
 	inFile, _ := os.Open(configFileName)
 	defer func() {
@@ -31,6 +32,7 @@ func prepareConfig(configFileName string) {
 	scanner := bufio.NewScanner(inFile)
 	scanner.Split(bufio.ScanLines)
 
+	var outputLine []string
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.HasPrefix(line, "#undef") {
@@ -51,7 +53,11 @@ func prepareConfig(configFileName string) {
 			}
 			fmt.Println("--> ", line)
 		}
+		outputLine = append(outputLine, line)
 	}
+	// close file
+	// write to file
+	// close file
 }
 
 func comment(line string) string {

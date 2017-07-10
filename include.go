@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// TODO : create the filter
 func changeInclude(file string) {
 	inFile, _ := os.Open(file)
 	defer func() {
