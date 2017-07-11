@@ -19,6 +19,8 @@ var com = []string{
 	"volatile",
 }
 
+// TODO : add more config parameters
+
 func prepareConfig(inputConfig, outputConfig string) {
 	inFile, err := os.Open(inputConfig)
 	if err != nil {

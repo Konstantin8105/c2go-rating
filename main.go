@@ -177,21 +177,7 @@ func main() {
 		}
 
 		// Create config.h file
-		//err = copyFile(gslFolder+"config.h.in", gslOutput+"config.h")
-		//if err != nil {
-		//	panic(err)
-		//}
 		prepareConfig(gslFolder+"config.h.in", gslOutput+"config.h") //gslOutput + "config.h")
-
-		// Editing of includes
-		//filesAll, err := ioutil.ReadDir(gslOutput)
-		//if err != nil {
-		//	panic(err)
-		//	}
-		//	for _, file := range filesAll {
-		//		fmt.Println("File : ", file.Name())
-		//		changeInclude(gslOutput + file.Name())
-		//	}
 
 		// Transpiling
 		filesC, err := filepath.Glob(gslOutput + "*.c")
