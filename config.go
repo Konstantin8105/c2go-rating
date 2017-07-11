@@ -13,7 +13,7 @@ var config = map[string]string{
 	//	"HAVE_DLFCN_H":               "0",
 	//	"HAVE_SYS_TYPES_H":           "0",
 	//	"HAVE_LIBM":                  "0",
-	"HAVE_INLINE": "0",
+	//"HAVE_INLINE": "0",
 }
 
 var com = []string{
@@ -21,7 +21,7 @@ var com = []string{
 	"inline",
 	"size_t",
 	"volatile",
-	"HAVE_IEEEFP_H",
+	//"HAVE_IEEEFP_H",
 }
 
 // TODO : add more config parameters
