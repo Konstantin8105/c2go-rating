@@ -79,7 +79,7 @@ func main() {
 	// Amount C source codes in c2go
 	var countFiles int
 
-	if false {
+	{
 		// Single file C source code
 		fmt.Println("Analising : Single C source codes")
 
@@ -120,7 +120,7 @@ func main() {
 	for i := 0; i < 5; i++ {
 		fmt.Println("=*=")
 	}
-	if false {
+	{
 		// sqlite
 		fmt.Println("Analising : SQLITE")
 
@@ -158,7 +158,7 @@ func main() {
 			}
 		}
 	}
-	{
+	if false {
 		fmt.Println("GSL")
 		// Copy files *.c and *.h to GSL output folder
 		var files []string

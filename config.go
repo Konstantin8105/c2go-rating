@@ -8,12 +8,37 @@ import (
 )
 
 var config = map[string]string{
-	"HAVE_C99_INLINE":            "0",
-	"HAVE_GNUX86_IEEE_INTERFACE": "1",
-	//	"HAVE_DLFCN_H":               "0",
-	//	"HAVE_SYS_TYPES_H":           "0",
-	//	"HAVE_LIBM":                  "0",
-	//"HAVE_INLINE": "0",
+	"HAVE_GNUX86_IEEE_INTERFACE":        "1",
+	"GSL_DISABLE_DEPRECATED":            "1",
+	"HAVE_C99_INLINE":                   "0",
+	"HAVE_DLFCN_H":                      "0",
+	"HAVE_DOPRNT":                       "0",
+	"HAVE_EXIT_SUCCESS_AND_FAILURE":     "1",
+	"HAVE_EXTENDED_PRECISION_REGISTERS": "1",
+	"HAVE_FPU_X86_SSE":                  "0",
+	"HAVE_IEEE_COMPARISONS":             "1",
+	"HAVE_IEEE_DENORMALS":               "1",
+	"HAVE_INLINE":                       "1",
+	"HAVE_INTTYPES_H":                   "0",
+	"HAVE_LIBM":                         "0",
+	"HAVE_MEMCPY":                       "1",
+	"HAVE_MEMMOVE":                      "1",
+	"HAVE_MEMORY_H":                     "1",
+	"HAVE_PRINTF_LONGDOUBLE":            "1",
+	"HAVE_STDINT_H":                     "0",
+	"HAVE_STDLIB_H":                     "0",
+	"HAVE_STRDUP":                       "0",
+	"HAVE_STRINGS_H":                    "0",
+	"HAVE_STRING_H":                     "0",
+	"HAVE_STRTOL":                       "0",
+	"HAVE_STRTOUL":                      "0",
+	"HAVE_SYS_STAT_H":                   "0",
+	"HAVE_SYS_TYPES_H":                  "0",
+	"HAVE_UNISTD_H":                     "0",
+	"HAVE_VPRINTF":                      "0",
+	"PACKAGE":                           "GoGSL",
+	"PACKAGE_BUGREPORT":                 "\"\"",
+	"PACKAGE_NAME":                      "GoGSL",
 }
 
 var com = []string{
@@ -22,6 +47,8 @@ var com = []string{
 	"size_t",
 	"volatile",
 	//"HAVE_IEEEFP_H",
+	"HIDE_INLINE_STATIC",
+	"__CHAR_UNSIGNED__",
 }
 
 // TODO : add more config parameters
