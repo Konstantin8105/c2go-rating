@@ -19,31 +19,44 @@ var com = []string{
 	"volatile",
 }
 
-// TODO : add other
-// TODO : create like filter
-func prepareConfig(configFileName string) {
-	inFile, _ := os.Open(configFileName)
+func prepareConfig(inputConfig, outputConfig string) {
+	inFile, err := os.Open(inputConfig)
+	if err != nil {
+		panic(fmt.Errorf("cannot open file %v", inputConfig))
+	}
+	// close file
 	defer func() {
 		err := inFile.Close()
 		if err != nil {
 			panic(err)
 		}
 	}()
+	outFile, err := os.Create(outputConfig)
+	if err != nil {
+		panic(fmt.Errorf("cannot create file %v", outputConfig))
+	}
+	// close file
+	defer func() {
+		err := outFile.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
+
 	scanner := bufio.NewScanner(inFile)
 	scanner.Split(bufio.ScanLines)
 
-	var outputLine []string
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.HasPrefix(line, "#undef") {
 			parts := strings.Split(line, " ")
 			value, ok := config[parts[1]]
 			if ok {
-				fmt.Println("#define " + parts[1] + " " + value)
+				fmt.Fprintf(outFile, "#define %v %v\n", parts[1], value)
 				continue
 			}
 			if strings.HasPrefix(parts[1], "HAVE_DECL_") {
-				fmt.Println("#define " + parts[1] + " " + "0")
+				fmt.Fprintf(outFile, "#define %v 0\n", parts[1])
 				continue
 			}
 			for _, c := range com {
@@ -51,13 +64,9 @@ func prepareConfig(configFileName string) {
 					line = comment(line)
 				}
 			}
-			fmt.Println("--> ", line)
 		}
-		outputLine = append(outputLine, line)
+		fmt.Fprintf(outFile, "%v\n", line)
 	}
-	// close file
-	// write to file
-	// close file
 }
 
 func comment(line string) string {

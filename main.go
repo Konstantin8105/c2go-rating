@@ -167,7 +167,7 @@ func main() {
 			if path.Ext(file) == ".c" || path.Ext(file) == ".h" {
 				ff := strings.Split(file, "/")
 				outputFile := gslOutput + ff[len(ff)-1]
-				err := copyFile(file, outputFile)
+				err := changeInclude(file, outputFile)
 				if err != nil {
 					fmt.Println("File  = ", file)
 					fmt.Println("Out   = ", outputFile)
@@ -177,22 +177,21 @@ func main() {
 		}
 
 		// Create config.h file
-		err = copyFile(gslFolder+"config.h.in", gslOutput+"config.h")
-		if err != nil {
-			panic(err)
-		}
-		prepareConfig(gslOutput + "config.h")
+		//err = copyFile(gslFolder+"config.h.in", gslOutput+"config.h")
+		//if err != nil {
+		//	panic(err)
+		//}
+		prepareConfig(gslFolder+"config.h.in", gslOutput+"config.h") //gslOutput + "config.h")
 
 		// Editing of includes
-		filesAll, err := ioutil.ReadDir(gslOutput)
-		if err != nil {
-			panic(err)
-		}
-		for _, file := range filesAll {
-			fmt.Println("File : ", file.Name())
-			changeInclude(gslOutput + file.Name())
-		}
-		panic("dd")
+		//filesAll, err := ioutil.ReadDir(gslOutput)
+		//if err != nil {
+		//	panic(err)
+		//	}
+		//	for _, file := range filesAll {
+		//		fmt.Println("File : ", file.Name())
+		//		changeInclude(gslOutput + file.Name())
+		//	}
 
 		// Transpiling
 		filesC, err := filepath.Glob(gslOutput + "*.c")
@@ -235,12 +234,9 @@ func getInternalDirectory(folder string, filesSummary *[]string) {
 			var f []string
 			folderName := folder + file.Name() + "/"
 			getInternalDirectory(folderName, &f)
-			for i := range f {
-				f[i] = folderName + f[i]
-			}
 			*filesSummary = append(*filesSummary, f...)
 		} else {
-			*filesSummary = append(*filesSummary, file.Name())
+			*filesSummary = append(*filesSummary, folder+file.Name())
 		}
 	}
 }
