@@ -38,62 +38,25 @@ Now, that software checked only on linux system and may be not work on Win, Darw
 |   | 65 is Ok at 90 source c files |
 |   | File 'counts.c' have 1 error instand of 3 |
 |   | File "fibo.c" is Ok |
+| 26.08.2017 | After big Elliot PR |
+|   | Before: 25 mistakes in short file tests |
+|   | After : just 5 mistakes |
 
 
 ## Present list of mistake files
 
 ```
 Amount mistake source by gcc:  0
-Amount mistake c2go results:  25
-	Mistake file :  SingleCcode/17-2.c
-		Error:  panic: format.Node internal error (107:10: expected '==', found '=')
-	Mistake file :  SingleCcode/19.c
-		Error:  panic: format.Node internal error (138:37: expected ')', found '+=' (and 1 more errors))
-	Mistake file :  SingleCcode/20.c
-		Error:  panic: format.Node internal error (112:35: missing ',' in argument list)
+Amount mistake c2go results:  5
 	Mistake file :  SingleCcode/27.c
-		Error:  panic: (*ast.FunctionDecl) (0x5865c0,0xc420350000)
+		Error:  panic: (*ast.FunctionDecl) (0x589700,0xc420180400)
 	Mistake file :  SingleCcode/31.c
-		Error:  panic: (*ast.FunctionDecl) (0x5865c0,0xc4203ca700)
-	Mistake file :  SingleCcode/array2.c
-		Error:  panic: format.Node internal error (121:42: expected ']', found '+=' (and 10 more errors))
-	Mistake file :  SingleCcode/bubble.c
-		Error:  panic: format.Node internal error (122:42: expected ']', found '+=' (and 10 more errors))
-	Mistake file :  SingleCcode/clean.c
-		Error:  panic: format.Node internal error (115:9: expected '==', found '=' (and 1 more errors))
-	Mistake file :  SingleCcode/counts.c
-		Error:  panic: format.Node internal error (119:9: expected '==', found '=' (and 1 more errors))
-	Mistake file :  SingleCcode/cpfile.c
-		Error:  panic: format.Node internal error (234:10: expected '==', found '=' (and 2 more errors))
-	Mistake file :  SingleCcode/cpintarray.c
-		Error:  panic: format.Node internal error (104:6: expected ')', found '+=' (and 10 more errors))
+		Error:  panic: (*ast.FunctionDecl) (0x589700,0xc4204b6000)
 	Mistake file :  SingleCcode/kilo.c
-		Error:  panic: invalid identity: 'Not[]erow'
-	Mistake file :  SingleCcode/linear.c
-		Error:  panic: format.Node internal error (132:42: expected ']', found '+=' (and 10 more errors))
-	Mistake file :  SingleCcode/makebinfile.c
-		Error:  panic: format.Node internal error (126:11: expected '==', found '=' (and 1 more errors))
-	Mistake file :  SingleCcode/merge.c
-		Error:  panic: format.Node internal error (114:42: expected ']', found '+=' (and 10 more errors))
-	Mistake file :  SingleCcode/number.c
-		Error:  panic: format.Node internal error (142:6: expected ']', found '+=')
-	Mistake file :  SingleCcode/selection.c
-		Error:  panic: format.Node internal error (121:42: expected ']', found '+=' (and 10 more errors))
-	Mistake file :  SingleCcode/shift.c
-		Error:  panic: format.Node internal error (149:8: expected ']', found '+=' (and 1 more errors))
-	Mistake file :  SingleCcode/sieve.c
-		Error:  panic: format.Node internal error (121:18: expected ']', found '+=' (and 1 more errors))
-	Mistake file :  SingleCcode/sortmerge.c
-		Error:  panic: format.Node internal error (108:9: expected '==', found '=' (and 10 more errors))
-	Mistake file :  SingleCcode/studentarray.c
-		Error:  panic: format.Node internal error (108:9: expected '==', found '=' (and 2 more errors))
-	Mistake file :  SingleCcode/studentlist.c
-		Error:  panic: format.Node internal error (118:9: expected '==', found '=' (and 1 more errors))
+		Error:  panic: invalid identity: 'NotNoarch.File' [recovered]
 	Mistake file :  SingleCcode/triangle.c
-		Error:  panic: interface conversion: ast.Node is *ast.MemberExpr, not *ast.DeclRefExpr
+		Error:  panic: invalid identity: 'insertvertexresult ()' [recovered]
 	Mistake file :  sqlite/shell.c
-		Error:  panic: unknown node type: 'IndirectFieldDecl 0x1d599c8 <line:167:25> col:25 implicit fpstate 'struct _fpstate *''
-	Mistake file :  sqlite/sqlite3.c
-		Error:  panic: interface conversion: interface {} is nil, not string
-Result: 65 is Ok at 90 source c files - 72.222 procent. 
+		Error:  panic: unknown node type: 'Field 0x1e8f970 '' 'union sigcontext::(anonymous at /usr/include/x86_64-linux-gnu/bits/sigcontext.h:165:17)''
+Result: 85 is Ok at 90 source c files - 94.444 procent.
 ```
