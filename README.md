@@ -41,22 +41,23 @@ Now, that software checked only on linux system and may be not work on Win, Darw
 | 26.08.2017 | After big Elliot PR |
 |   | Before: 25 mistakes in short file tests |
 |   | After : just 5 mistakes |
+| 20.10.2017 | Many modifications |
+|   | Success with sqlite source |
+|   | 4 panic error |
 
 
 ## Present list of mistake files
 
 ```
 Amount mistake source by gcc:  0
-Amount mistake c2go results:  5
+Amount mistake c2go results:  4
 	Mistake file :  SingleCcode/27.c
-		Error:  panic: (*ast.FunctionDecl) (0x589700,0xc420180400)
+		Error:  panic: (*ast.FunctionDecl) (0x73d7e0,0xc4204288f0)
 	Mistake file :  SingleCcode/31.c
-		Error:  panic: (*ast.FunctionDecl) (0x589700,0xc4204b6000)
+		Error:  panic: (*ast.FunctionDecl) (0x73d7e0,0xc4203b1340)
 	Mistake file :  SingleCcode/kilo.c
 		Error:  panic: invalid identity: 'NotNoarch.File' [recovered]
 	Mistake file :  SingleCcode/triangle.c
 		Error:  panic: invalid identity: 'insertvertexresult ()' [recovered]
-	Mistake file :  sqlite/shell.c
-		Error:  panic: unknown node type: 'Field 0x1e8f970 '' 'union sigcontext::(anonymous at /usr/include/x86_64-linux-gnu/bits/sigcontext.h:165:17)''
-Result: 85 is Ok at 90 source c files - 94.444 procent.
+Result: 86 is Ok at 90 source c files - 95.556 procent. 
 ```
