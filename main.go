@@ -42,8 +42,8 @@ func main() {
 		}
 		wg.Done()
 	}()
-	//singleCcode(cErr)
-	//triangle(cErr)
+	singleCcode(cErr)
+	triangle(cErr)
 	csmith(cErr)
 	close(cErr)
 	wg.Wait()
