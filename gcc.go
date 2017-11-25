@@ -7,6 +7,7 @@ import (
 )
 
 func gccExecution(files ...string) error {
+	fmt.Println("GCC: ", files)
 	var arg []string
 	arg = append(arg, "-o", "app")
 	arg = append(arg, files...)

@@ -6,8 +6,12 @@ import (
 	"os/exec"
 )
 
-func c2goTranspiling(file string) error {
-	cmd := exec.Command("c2go", "transpile", "-o", "/tmp/1.go", file)
+func c2goTranspiling(file ...string) error {
+	fmt.Println("C2GO : ", file)
+	var arg []string
+	arg = append(arg, "transpile", "-o", "/tmp/1.go")
+	arg = append(arg, file...)
+	cmd := exec.Command("c2go", arg...)
 	var out bytes.Buffer
 	var stderr bytes.Buffer
 	cmd.Stdout = &out

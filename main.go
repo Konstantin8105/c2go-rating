@@ -1,36 +1,34 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"os"
+	"os/exec"
 	"path/filepath"
 	"sync"
 )
 
-const (
-	// Folder with sqlite files for testing
-	sqliteFolder string = "./sqlite/"
+func csmithExecute(file string) error {
+	cmd := exec.Command("/bin/bash", "-c", "csmith")
+	fmt.Println("file ", file)
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("csmith : %v\n%v\n%v", err, out.String(), stderr.String())
+	}
 
-	// Folder with GSL files for testing
-	gslFolder string = "./gsl/"
-
-	// Folder for output files of GSL
-	gslOutput string = "./gslOutput/"
-)
-
-// generate C codes
-func generate() {
-	// Generate c code
-	// csmith > test.c;
-
-	// Check by GCC
-	// gcc -I./csmith/runtime -O -w test.c -o a.out;
-	// ./a.out;
-
-	// Check transpiling c2go
-	// c2go transpile -clang-flag="-I./csmith/runtime" ./test.c;
-
-	// Check compile
-	// go run ./test.go;
+	f, err := os.Create(file)
+	defer f.Close()
+	_, err = f.Write(out.Bytes())
+	if err != nil {
+		fmt.Println("err ", err)
+		return err
+	}
+	return nil
 }
 
 func main() {
@@ -44,8 +42,9 @@ func main() {
 		}
 		wg.Done()
 	}()
-	singleCcode(cErr)
-	triangle(cErr)
+	//singleCcode(cErr)
+	//triangle(cErr)
+	csmith(cErr)
 	close(cErr)
 	wg.Wait()
 
@@ -99,6 +98,56 @@ func triangle(cErr chan<- error) {
 	if err := c2goTranspiling(file); err != nil {
 		cErr <- err
 	} else {
+		cErr <- nil
+	}
+}
+
+func csmith(cErr chan<- error) {
+	sourceFolder := "./testdata/csmith/"
+
+	// Get all files
+	files, err := filepath.Glob(sourceFolder + "*.c")
+	if err != nil {
+		panic(fmt.Errorf("Error: %v", err))
+	}
+
+	minAmount := 300
+	if len(files) < minAmount {
+		ch := make(chan string, 10)
+		var wg sync.WaitGroup
+		for i := 0; i < 10; i++ {
+			wg.Add(1)
+			go func() {
+				for c := range ch {
+					// Generate c code
+					// csmith > test.c;
+					csmithExecute(c)
+				}
+				wg.Done()
+			}()
+		}
+		for i := 0; i < minAmount; i++ {
+			ch <- fmt.Sprintf("./testdata/csmith/%d.c", i)
+		}
+		close(ch)
+		wg.Wait()
+
+		csmith(cErr)
+		return
+	}
+
+	// Check in gcc
+	for _, file := range files {
+		if err := gccExecution("-I./testdata/csmith-git/runtime/", file); err != nil {
+			cErr <- err
+		}
+	}
+
+	// Transpiling by c2go
+	for _, file := range files {
+		if err := c2goTranspiling("-clang-flag", "-I./testdata/csmith-git/runtime/", file); err != nil {
+			cErr <- err
+		}
 		cErr <- nil
 	}
 }
