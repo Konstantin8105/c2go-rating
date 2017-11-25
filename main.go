@@ -2,18 +2,11 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
-	"path"
 	"path/filepath"
-	"strings"
+	"sync"
 )
 
 const (
-	// Folder with C code execute file
-	// one file - one application
-	singleFolder string = "./SingleCcode/"
-
 	// Folder with sqlite files for testing
 	sqliteFolder string = "./sqlite/"
 
@@ -22,207 +15,90 @@ const (
 
 	// Folder for output files of GSL
 	gslOutput string = "./gslOutput/"
-
-	// c2go application name
-	c2go string = "./c2go"
 )
 
-func convertFromSourceToAppName(sourceName string) string {
-	return sourceName[0:(len(sourceName) - len(filepath.Ext(sourceName)))]
-}
+// generate C codes
+func generate() {
+	// Generate c code
+	// csmith > test.c;
 
-type result struct {
-	fileName string
-	err      error
+	// Check by GCC
+	// gcc -I./csmith/runtime -O -w test.c -o a.out;
+	// ./a.out;
+
+	// Check transpiling c2go
+	// c2go transpile -clang-flag="-I./csmith/runtime" ./test.c;
+
+	// Check compile
+	// go run ./test.go;
 }
 
 func main() {
-
-	// Checking applications and folders
-	// for start the checking
-	_, err := os.Stat(c2go)
-	if err != nil {
-		panic(fmt.Errorf("application c2go is not found"))
-	}
-
-	_, err = os.Stat(singleFolder)
-	if err != nil {
-		panic(fmt.Errorf("folder %v is not found", singleFolder))
-	}
-
-	_, err = os.Stat(sqliteFolder)
-	if err != nil {
-		panic(fmt.Errorf("folder %v is not found", sqliteFolder))
-	}
-
-	_, err = os.Stat(gslFolder)
-	if err != nil {
-		panic(fmt.Errorf("folder %v is not found", gslFolder))
-	}
-
-	err = os.RemoveAll(gslOutput)
-	if err != nil {
-		panic(fmt.Errorf("cannot remove %v folder", gslOutput))
-	}
-
-	err = os.Mkdir(gslOutput, 0777)
-	if err != nil {
-		panic(fmt.Errorf("cannot create %v folder", gslOutput))
-	}
-
-	// saving results of gcc
-	var mistakeFilesGCC []string
-
-	// Saving results of c2go
-	var results []result
-
-	// Amount C source codes in c2go
-	var countFiles int
-
-	{
-		// Single file C source code
-		fmt.Println("Analising : Single C source codes")
-
-		// Remove Go files
-		removeGoFiles(singleFolder)
-		defer removeGoFiles(singleFolder)
-
-		// Remove the gcc result
-		removeGCCfiles(singleFolder)
-		defer removeGCCfiles(singleFolder)
-
-		// Get all files
-		files, err := filepath.Glob(singleFolder + "*.c")
-		if err != nil {
-			panic(fmt.Errorf("Error: %v", err))
+	var data []error
+	cErr := make(chan error)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		for e := range cErr {
+			data = append(data, e)
 		}
+		wg.Done()
+	}()
+	singleCcode(cErr)
+	triangle(cErr)
+	close(cErr)
+	wg.Wait()
 
-		// Check in gcc
-		for _, file := range files {
-			appName := convertFromSourceToAppName(file)
-			if err := gccExecution(appName, file); err != nil {
-				mistakeFilesGCC = append(mistakeFilesGCC, file)
-			}
-		}
-
-		// Transpiling by c2go
-		for _, file := range files {
-			countFiles++
-			goFile := convertFromSourceToAppName(file) + ".go"
-			if err := c2goTranspiling(file, goFile); err != nil {
-				results = append(results, result{
-					fileName: file,
-					err:      err,
-				})
-			}
+	var fail int
+	for _, d := range data {
+		if d != nil {
+			fmt.Println("------")
+			fmt.Println(d)
+			fail++
 		}
 	}
-	for i := 0; i < 5; i++ {
-		fmt.Println("=*=")
-	}
-	{
-		// sqlite
-		fmt.Println("Analising : SQLITE")
-
-		// Remove Go files
-		removeGoFiles(sqliteFolder)
-		defer removeGoFiles(sqliteFolder)
-
-		// Remove the gcc result
-		removeGCCfiles(sqliteFolder)
-		defer removeGCCfiles(sqliteFolder)
-
-		// Get all files
-		files, err := filepath.Glob(sqliteFolder + "*.c")
-		if err != nil {
-			panic(fmt.Errorf("Error: %v", err))
-		}
-
-		// checking by GCC
-		if err := gccExecution("sqlite3", files...); err != nil {
-			fmt.Println("=== MISTAKE IN GCC ===")
-			fmt.Printf("Cannot compile by gcc file : %v\n", sqliteFolder)
-			fmt.Printf("Error                      : %v\n", err)
-			return
-		}
-
-		// Transpiling by c2go
-		for _, file := range files {
-			countFiles++
-			goFile := convertFromSourceToAppName(file) + ".go"
-			if err := c2goTranspiling(file, goFile); err != nil {
-				results = append(results, result{
-					fileName: file,
-					err:      err,
-				})
-			}
-		}
-	}
-	if false {
-		fmt.Println("GSL")
-		// Copy files *.c and *.h to GSL output folder
-		var files []string
-		getInternalDirectory(gslFolder, &files)
-		for _, file := range files {
-			if path.Ext(file) == ".c" || path.Ext(file) == ".h" {
-				ff := strings.Split(file, "/")
-				outputFile := gslOutput + ff[len(ff)-1]
-				err := changeInclude(file, outputFile)
-				if err != nil {
-					fmt.Println("File  = ", file)
-					fmt.Println("Out   = ", outputFile)
-					fmt.Println("Error = ", err)
-				}
-			}
-		}
-
-		// Create config.h file
-		prepareConfig(gslFolder+"config.h.in", gslOutput+"config.h") //gslOutput + "config.h")
-
-		// Transpiling
-		filesC, err := filepath.Glob(gslOutput + "*.c")
-		if err != nil {
-			panic(fmt.Errorf("Error: %v", err))
-		}
-		for _, ff := range filesC {
-			countFiles++
-			goFile := convertFromSourceToAppName(ff) + ".go"
-			if err := c2goTranspiling(ff, goFile); err != nil {
-				results = append(results, result{
-					fileName: ff,
-					err:      err,
-				})
-			}
-		}
-	}
-
-	// Mistakes is not allowable
-	fmt.Println("Amount mistake source by gcc: ", len(mistakeFilesGCC))
-	for _, m := range mistakeFilesGCC {
-		fmt.Println("\tMistake file : ", m)
-	}
-	// Calculate rating
-	fmt.Println("Amount mistake c2go results: ", len(results))
-	for _, r := range results {
-		fmt.Println("\tMistake file : ", r.fileName)
-		fmt.Println("\t\tError: ", strings.Split(r.err.Error(), "\n")[0])
-	}
-	fmt.Printf("Result: %v is Ok at %v source c files - %.5v procent. \n", countFiles-len(results), countFiles, float64(countFiles-len(results))/float64(countFiles)*100.0)
+	fmt.Println("Fail   results : ", fail)
+	fmt.Println("Amount results : ", len(data))
 }
 
-func getInternalDirectory(folder string, filesSummary *[]string) {
-	files, err := ioutil.ReadDir(folder)
+func singleCcode(cErr chan<- error) {
+	sourceFolder := "./testdata/SingleCcode/"
+
+	// Get all files
+	files, err := filepath.Glob(sourceFolder + "*.c")
 	if err != nil {
-		panic(fmt.Errorf("cannot read dir %v", folder))
+		panic(fmt.Errorf("Error: %v", err))
 	}
+
+	// Check in gcc
 	for _, file := range files {
-		if file.IsDir() {
-			var f []string
-			folderName := folder + file.Name() + "/"
-			getInternalDirectory(folderName, &f)
-			*filesSummary = append(*filesSummary, f...)
-		} else {
-			*filesSummary = append(*filesSummary, folder+file.Name())
+		if err := gccExecution(file); err != nil {
+			cErr <- err
 		}
+	}
+
+	// Transpiling by c2go
+	for _, file := range files {
+		if err := c2goTranspiling(file); err != nil {
+			cErr <- err
+		}
+		cErr <- nil
+	}
+}
+
+func triangle(cErr chan<- error) {
+	sourceFolder := "./testdata/triangle/"
+	file := sourceFolder + "triangle.c"
+
+	// Check in gcc
+	if err := gccExecution(file, "-lm"); err != nil {
+		cErr <- err
+	}
+
+	// Transpiling by c2go
+	if err := c2goTranspiling(file); err != nil {
+		cErr <- err
+	} else {
+		cErr <- nil
 	}
 }
