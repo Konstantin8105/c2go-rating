@@ -3,11 +3,85 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"math/rand"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"sync"
+	"time"
 )
+
+func main() {
+	var data []error
+	cErr := make(chan error)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		for e := range cErr {
+			data = append(data, e)
+			if e != nil {
+				fmt.Println("------")
+				fmt.Println(e)
+			}
+		}
+		wg.Done()
+	}()
+	singleCcode(cErr)
+	triangle(cErr)
+	csmith(cErr)
+	close(cErr)
+	wg.Wait()
+
+	var fail int
+	for _, d := range data {
+		if d != nil {
+			fail++
+		}
+	}
+	fmt.Println("Fail   results : ", fail)
+	fmt.Println("Amount results : ", len(data))
+}
+
+func singleCcode(cErr chan<- error) {
+	sourceFolder := "./testdata/SingleCcode/"
+
+	// Get all files
+	files, err := filepath.Glob(sourceFolder + "*.c")
+	if err != nil {
+		panic(fmt.Errorf("Error: %v", err))
+	}
+
+	for _, file := range files {
+		// Check in gcc
+		if err := gccExecution(file); err != nil {
+			cErr <- err
+			continue
+		}
+		// Transpiling by c2go
+		if err := c2goTranspiling(file); err != nil {
+			cErr <- err
+			continue
+		}
+		cErr <- nil
+	}
+}
+
+func triangle(cErr chan<- error) {
+	sourceFolder := "./testdata/triangle/"
+	file := sourceFolder + "triangle.c"
+
+	// Check in gcc
+	if err := gccExecution(file, "-lm"); err != nil {
+		cErr <- err
+	}
+
+	// Transpiling by c2go
+	if err := c2goTranspiling(file); err != nil {
+		cErr <- err
+	} else {
+		cErr <- nil
+	}
+}
 
 func csmithExecute(file string) error {
 	cmd := exec.Command("/bin/bash", "-c", "csmith")
@@ -31,77 +105,6 @@ func csmithExecute(file string) error {
 	return nil
 }
 
-func main() {
-	var data []error
-	cErr := make(chan error)
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		for e := range cErr {
-			data = append(data, e)
-		}
-		wg.Done()
-	}()
-	singleCcode(cErr)
-	triangle(cErr)
-	csmith(cErr)
-	close(cErr)
-	wg.Wait()
-
-	var fail int
-	for _, d := range data {
-		if d != nil {
-			fmt.Println("------")
-			fmt.Println(d)
-			fail++
-		}
-	}
-	fmt.Println("Fail   results : ", fail)
-	fmt.Println("Amount results : ", len(data))
-}
-
-func singleCcode(cErr chan<- error) {
-	sourceFolder := "./testdata/SingleCcode/"
-
-	// Get all files
-	files, err := filepath.Glob(sourceFolder + "*.c")
-	if err != nil {
-		panic(fmt.Errorf("Error: %v", err))
-	}
-
-	// Check in gcc
-	for _, file := range files {
-		if err := gccExecution(file); err != nil {
-			cErr <- err
-		}
-	}
-
-	// Transpiling by c2go
-	for _, file := range files {
-		if err := c2goTranspiling(file); err != nil {
-			cErr <- err
-		}
-		cErr <- nil
-	}
-}
-
-func triangle(cErr chan<- error) {
-	sourceFolder := "./testdata/triangle/"
-	file := sourceFolder + "triangle.c"
-
-	// Check in gcc
-	if err := gccExecution(file, "-lm"); err != nil {
-		cErr <- err
-	}
-
-	// Transpiling by c2go
-	if err := c2goTranspiling(file); err != nil {
-		cErr <- err
-	} else {
-		cErr <- nil
-	}
-}
-
 func csmith(cErr chan<- error) {
 	sourceFolder := "./testdata/csmith/"
 
@@ -111,7 +114,7 @@ func csmith(cErr chan<- error) {
 		panic(fmt.Errorf("Error: %v", err))
 	}
 
-	minAmount := 300
+	minAmount := 30
 	if len(files) < minAmount {
 		ch := make(chan string, 10)
 		var wg sync.WaitGroup
@@ -121,13 +124,20 @@ func csmith(cErr chan<- error) {
 				for c := range ch {
 					// Generate c code
 					// csmith > test.c;
-					csmithExecute(c)
+					_ = csmithExecute(c)
 				}
 				wg.Done()
 			}()
 		}
-		for i := 0; i < minAmount; i++ {
-			ch <- fmt.Sprintf("./testdata/csmith/%d.c", i)
+		files, err := filepath.Glob(sourceFolder + "*.c")
+		if err != nil {
+			panic(fmt.Errorf("Error: %v", err))
+		}
+		s1 := rand.NewSource(time.Now().UnixNano())
+		r1 := rand.New(s1)
+		prefix := r1.Intn(10000)
+		for i := len(files); i < minAmount; i++ {
+			ch <- fmt.Sprintf("./testdata/csmith/%d_%d.c", prefix, i)
 		}
 		close(ch)
 		wg.Wait()
@@ -136,17 +146,16 @@ func csmith(cErr chan<- error) {
 		return
 	}
 
-	// Check in gcc
 	for _, file := range files {
+		// Check in gcc
 		if err := gccExecution("-I./testdata/csmith-git/runtime/", file); err != nil {
 			cErr <- err
+			continue
 		}
-	}
-
-	// Transpiling by c2go
-	for _, file := range files {
+		// Transpiling by c2go
 		if err := c2goTranspiling("-clang-flag", "-I./testdata/csmith-git/runtime/", file); err != nil {
 			cErr <- err
+			continue
 		}
 		cErr <- nil
 	}
