@@ -157,6 +157,7 @@ func csmith(cErr chan<- error) {
 			cErr <- err
 			continue
 		}
+		// TODO compare result
 		cErr <- nil
 	}
 }
