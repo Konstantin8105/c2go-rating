@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"math/rand"
 	"os"
@@ -12,6 +13,9 @@ import (
 )
 
 func main() {
+	part := flag.String("part", "", "Choose: single, triangle, csmith")
+	flag.Parse()
+
 	var data []error
 	cErr := make(chan error)
 	var wg sync.WaitGroup
@@ -26,9 +30,18 @@ func main() {
 		}
 		wg.Done()
 	}()
-	singleCcode(cErr)
-	triangle(cErr)
-	csmith(cErr)
+	switch *part {
+	case "":
+		singleCcode(cErr)
+		triangle(cErr)
+		csmith(cErr)
+	case "single":
+		singleCcode(cErr)
+	case "triangle":
+		triangle(cErr)
+	case "csmith":
+		csmith(cErr)
+	}
 	close(cErr)
 	wg.Wait()
 
