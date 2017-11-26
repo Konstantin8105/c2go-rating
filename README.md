@@ -7,6 +7,19 @@ C code base:
 * https://www.cs.cmu.edu/~quake/triangle.html
 * http://www.sqlite.org/cgi/src/doc/trunk/README.md
 
+## For future
+
+https://github.com/duxing2007/books-examples
+https://github.com/roktas/apue2e
+https://github.com/caisah/K-and-R-exercises-and-examples
+https://github.com/eugenetriguba/programming-in-c
+https://github.com/olegbukatchuk/book-c-the-examples-and-tasks
+https://github.com/KushalP/k-and-r
+https://github.com/team6612/ac-book
+https://github.com/xavriley/c_programming_language_book
+https://github.com/Emmetttt/C-Deitel-Book
+
+
 ## Instruction
 
 Now, that software checked only on linux system and may be not work on Win, Darwin.
