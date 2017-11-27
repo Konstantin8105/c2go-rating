@@ -28,8 +28,12 @@ var cInput = make(chan part, 20)
 
 var cWarning = make(chan int, 20)
 
+var (
+	partFlag = flag.String("part", "", "Choose: single, triangle, csmith. If nothing is choosed, then start all.")
+	onlyFlag = flag.String("only", "", "Choose: gcc, c2go.")
+)
+
 func main() {
-	part := flag.String("part", "", "Choose: single, triangle, csmith")
 	flag.Parse()
 
 	var dataC2GO []error
@@ -59,7 +63,7 @@ func main() {
 
 	wg.Add(1)
 	go func() {
-		switch *part {
+		switch *partFlag {
 		case "":
 			folderCcode("./testdata/SingleCcode/")
 			folderCcode("./testdata/ac-book/")
@@ -148,7 +152,7 @@ func folderCcode(sourceFolder string) {
 
 	for _, file := range files {
 		cInput <- part{
-			gcc:  []string{file},
+			gcc:  []string{file, "-lm"},
 			c2go: []string{file},
 		}
 	}

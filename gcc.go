@@ -9,6 +9,9 @@ import (
 )
 
 func gccExecution(files ...string) (err error) {
+	if *onlyFlag != "" && *onlyFlag != "gcc" {
+		return nil
+	}
 	defer func() {
 		if err != nil {
 			cErrGCC <- err

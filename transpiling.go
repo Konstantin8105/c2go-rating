@@ -11,6 +11,9 @@ import (
 )
 
 func c2goTranspiling(files ...string) (err error) {
+	if *onlyFlag != "" && *onlyFlag != "c2go" {
+		return nil
+	}
 	defer func() {
 		cErrC2GO <- err
 	}()
