@@ -14,19 +14,19 @@ import (
 )
 
 // cErrC2GO - channel of errors
-var cErrC2GO = make(chan error, 100)
+var cErrC2GO = make(chan error, 20)
 
 // cErrC2GO - channel of errors
-var cErrGCC = make(chan error, 100)
+var cErrGCC = make(chan error, 20)
 
 type part struct {
 	gcc  []string
 	c2go []string
 }
 
-var cInput = make(chan part, 100)
+var cInput = make(chan part, 20)
 
-var cWarning = make(chan int, 100)
+var cWarning = make(chan int, 20)
 
 func main() {
 	part := flag.String("part", "", "Choose: single, triangle, csmith")
@@ -56,27 +56,33 @@ func main() {
 			wg.Done()
 		}()
 	}
-	switch *part {
-	case "":
-		folderCcode("./testdata/SingleCcode/")
-		folderCcode("./testdata/ac-book/")
-		folderCcode("./testdata/apue2e/")
-		folderCcode("./testdata/book-c-the-examples-and-tasks/")
-		folderCcode("./testdata/books-examples/")
-		folderCcode("./testdata/C-Deitel-Book/")
-		folderCcode("./testdata/c_programming_language_book/")
-		folderCcode("./testdata/k-and-r/")
-		folderCcode("./testdata/K-and-R-exercises-and-examples")
-		folderCcode("./testdata/programming-in-c")
-		triangle()
-		csmith()
-	case "single":
-		folderCcode("./testdata/SingleCcode/")
-	case "triangle":
-		triangle()
-	case "csmith":
-		csmith()
-	}
+
+	wg.Add(1)
+	go func() {
+		switch *part {
+		case "":
+			folderCcode("./testdata/SingleCcode/")
+			// folderCcode("./testdata/ac-book/")
+			// folderCcode("./testdata/apue2e/")
+			// folderCcode("./testdata/book-c-the-examples-and-tasks/")
+			// folderCcode("./testdata/books-examples/")
+			// folderCcode("./testdata/C-Deitel-Book/")
+			// folderCcode("./testdata/c_programming_language_book/")
+			// folderCcode("./testdata/k-and-r/")
+			// folderCcode("./testdata/K-and-R-exercises-and-examples")
+			// folderCcode("./testdata/programming-in-c")
+			// triangle()
+			// csmith()
+		case "single":
+			folderCcode("./testdata/SingleCcode/")
+		case "triangle":
+			triangle()
+		case "csmith":
+			csmith()
+		}
+		close(cInput)
+		wg.Done()
+	}()
 
 	wg2.Add(1)
 	go func() {
@@ -100,8 +106,8 @@ func main() {
 		wg2.Done()
 	}()
 
-	close(cInput)
 	wg.Wait()
+
 	close(cErrC2GO)
 	close(cErrGCC)
 	close(cWarning)

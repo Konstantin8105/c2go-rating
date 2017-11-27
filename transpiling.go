@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -20,7 +21,14 @@ func c2goTranspiling(files ...string) (err error) {
 	if err != nil {
 		return err
 	}
-	//defer func() { err = os.RemoveAll(dir) }() // clean up
+	defer func() {
+		if err != nil {
+			err2 := os.RemoveAll(dir)
+			err = fmt.Errorf("%v\n%v", err, err2)
+		} else {
+			err = os.RemoveAll(dir)
+		}
+	}() // clean up
 
 	var arg []string
 	arg = append(arg, "transpile", "-o", dir+"/1.go")
