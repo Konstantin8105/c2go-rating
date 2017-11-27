@@ -4,11 +4,15 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"os"
+	"log"
 	"os/exec"
+	"strings"
 )
 
-func c2goTranspiling(files ...string) error {
+func c2goTranspiling(files ...string) (err error) {
+	defer func() {
+		cErrC2GO <- err
+	}()
 	fmt.Println("C2GO : ", files)
 
 	// Generate output file
@@ -16,7 +20,7 @@ func c2goTranspiling(files ...string) error {
 	if err != nil {
 		return err
 	}
-	defer os.RemoveAll(dir) // clean up
+	//defer func() { err = os.RemoveAll(dir) }() // clean up
 
 	var arg []string
 	arg = append(arg, "transpile", "-o", dir+"/1.go")
@@ -30,5 +34,21 @@ func c2goTranspiling(files ...string) error {
 	if err != nil {
 		return fmt.Errorf("c2go : %v\n%v\n%v", err, out.String(), stderr.String())
 	}
+
+	// Calculate warnings
+	content, err := ioutil.ReadFile(dir + "/1.go")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	lines := strings.Split(string(content), "\n")
+	var counter int
+	for _, l := range lines {
+		if strings.HasPrefix(l, "// Warning") {
+			counter++
+		}
+	}
+	cWarning <- counter
+
 	return nil
 }

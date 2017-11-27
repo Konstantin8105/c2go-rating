@@ -8,15 +8,20 @@ import (
 	"os/exec"
 )
 
-func gccExecution(files ...string) error {
-	fmt.Println("GCC: ", files)
+func gccExecution(files ...string) (err error) {
+	defer func() {
+		if err != nil {
+			cErrGCC <- err
+		}
+	}()
+	fmt.Println("GCC  : ", files)
 
 	// Generate output file
 	dir, err := ioutil.TempDir("", "c2go-rating-gcc")
 	if err != nil {
 		return err
 	}
-	defer os.RemoveAll(dir) // clean up
+	defer func() { err = os.RemoveAll(dir) }() // clean up
 
 	var arg []string
 	arg = append(arg, "-o", dir+"/app")
