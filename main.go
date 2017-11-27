@@ -13,20 +13,27 @@ import (
 	"time"
 )
 
-// cErrC2GO - channel of errors
-var cErrC2GO = make(chan error, 20)
-
-// cErrC2GO - channel of errors
-var cErrGCC = make(chan error, 20)
-
 type part struct {
 	gcc  []string
 	c2go []string
 }
 
-var cInput = make(chan part, 20)
+var (
+	// cErrC2GO - channel of errors
+	cErrC2GO = make(chan error, 20)
 
-var cWarning = make(chan int, 20)
+	// cErrC2GO - channel of errors
+	cErrGCC = make(chan error, 20)
+
+	// cInput - just run
+	cInput = make(chan part, 20)
+
+	// cInputWithChecking - run and check result
+	cInputWithChecking = make(chan part, 20)
+
+	// cWarning - channel for summary warnings in Go code
+	cWarning = make(chan int, 20)
+)
 
 var (
 	partFlag = flag.String("part", "", "Choose: single, triangle, csmith. If nothing is choosed, then start all.")
@@ -59,6 +66,27 @@ func main() {
 			}
 			wg.Done()
 		}()
+
+		wg.Add(1)
+		go func() {
+			for inp := range cInputWithChecking {
+				if *onlyFlag == "c2go" {
+					cInput <- inp
+					continue
+				}
+				// Check in gcc
+				result, err := gccExecutionWithResult(inp.gcc...)
+				if err != nil {
+					fmt.Println(err)
+					continue
+				}
+				// Transpiling by c2go
+				if err := c2goTranspilingWithResult(result, inp.c2go...); err != nil {
+					fmt.Println(err)
+				}
+			}
+			wg.Done()
+		}()
 	}
 
 	wg.Add(1)
@@ -67,7 +95,6 @@ func main() {
 		case "":
 			folderCcode("./testdata/SingleCcode/")
 			folderCcode("./testdata/ac-book/")
-			folderCcode("./testdata/apue2e/")
 			folderCcode("./testdata/book-c-the-examples-and-tasks/")
 			folderCcode("./testdata/books-examples/")
 			folderCcode("./testdata/C-Deitel-Book/")
@@ -85,6 +112,7 @@ func main() {
 			csmith()
 		}
 		close(cInput)
+		close(cInputWithChecking)
 		wg.Done()
 	}()
 
@@ -231,7 +259,7 @@ func csmith() {
 	}
 
 	for _, file := range files {
-		cInput <- part{
+		cInputWithChecking <- part{
 			gcc:  []string{"-I./testdata/csmith-git/runtime/", file},
 			c2go: []string{"-clang-flag", "-I./testdata/csmith-git/runtime/", file},
 		}

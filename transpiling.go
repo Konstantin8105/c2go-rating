@@ -10,7 +10,11 @@ import (
 	"strings"
 )
 
-func c2goTranspiling(files ...string) (err error) {
+func c2goTranspiling(files ...string) error {
+	return c2goTranspilingWithResult("", files...)
+}
+
+func c2goTranspilingWithResult(result string, files ...string) (err error) {
 	if *onlyFlag != "" && *onlyFlag != "c2go" {
 		return nil
 	}
@@ -60,6 +64,23 @@ func c2goTranspiling(files ...string) (err error) {
 		}
 	}
 	cWarning <- counter
+
+	if result == "" {
+		_, err = run("go", []string{"build", dir + "/1.go"}...)
+		return
+	}
+
+	// compare result
+	var c2goResult string
+	c2goResult, err = run("go", []string{"run", dir + "/1.go"}...)
+	if err != nil {
+		return
+	}
+
+	if result != c2goResult {
+		err = fmt.Errorf("results is different:\n%v\n%v", result, c2goResult)
+		return
+	}
 
 	return nil
 }
