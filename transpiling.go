@@ -25,11 +25,11 @@ func c2goTranspiling(files ...string) (err error) {
 		return err
 	}
 	defer func() {
+		err2 := os.RemoveAll(dir)
 		if err != nil {
-			err2 := os.RemoveAll(dir)
 			err = fmt.Errorf("%v\n%v", err, err2)
 		} else {
-			err = os.RemoveAll(dir)
+			err = err2
 		}
 	}() // clean up
 
