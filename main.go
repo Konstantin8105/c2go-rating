@@ -62,17 +62,17 @@ func main() {
 		switch *part {
 		case "":
 			folderCcode("./testdata/SingleCcode/")
-			// folderCcode("./testdata/ac-book/")
-			// folderCcode("./testdata/apue2e/")
-			// folderCcode("./testdata/book-c-the-examples-and-tasks/")
-			// folderCcode("./testdata/books-examples/")
-			// folderCcode("./testdata/C-Deitel-Book/")
-			// folderCcode("./testdata/c_programming_language_book/")
-			// folderCcode("./testdata/k-and-r/")
-			// folderCcode("./testdata/K-and-R-exercises-and-examples")
-			// folderCcode("./testdata/programming-in-c")
-			// triangle()
-			// csmith()
+			folderCcode("./testdata/ac-book/")
+			folderCcode("./testdata/apue2e/")
+			folderCcode("./testdata/book-c-the-examples-and-tasks/")
+			folderCcode("./testdata/books-examples/")
+			folderCcode("./testdata/C-Deitel-Book/")
+			folderCcode("./testdata/c_programming_language_book/")
+			folderCcode("./testdata/k-and-r/")
+			folderCcode("./testdata/K-and-R-exercises-and-examples")
+			folderCcode("./testdata/programming-in-c")
+			triangle()
+			csmith()
 		case "single":
 			folderCcode("./testdata/SingleCcode/")
 		case "triangle":
