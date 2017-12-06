@@ -18,6 +18,40 @@ C code base:
 
 ## For future
 
+Projects (single file):
+
+http://www.iro.umontreal.ca/~felipe/IFT2030-Automne2002/Complements/tinyc.c
+https://github.com/shenfeng/tiny-web-server/blob/master/tiny.c
+https://github.com/adamdunkels/ubasic
+https://github.com/fabianishere/brainfuck/tree/master/src
+https://github.com/zserge/partcl/blob/master/tcl.c
+https://github.com/zserge/expr
+https://github.com/phase/o/blob/master/o.c
+https://github.com/kgabis/brainfuck-c
+https://github.com/bbu/simple-interpreter/tree/master/src
+https://github.com/nanoflite/basic
+https://github.com/fragglet/yoctolisp
+https://github.com/paladin-t/my_basic/tree/master/core
+https://raw.githubusercontent.com/dtschump/CImg/master/CImg.h (cpp)
+https://github.com/vurtun/nuklear
+Collections:
+
+http://www.ioccc.org/years.html
+https://cis.temple.edu/~ingargio/cis71/code/
+https://github.com/nothings/single_file_libs
+Projects (multi file):
+
+https://github.com/larmel/lacc
+https://github.com/kagemusha666/interpreter/tree/master/src
+https://github.com/steve-m/librtlsdr
+https://github.com/skx/simple.vm
+https://github.com/brackeen/ok-file-formats
+https://github.com/aligrudi/neatcc
+http://runtimeterror.com/tech/lil/
+Weird edge cases
+
+http://blog.robertelder.org/weird-c-syntax/
+https://news.ycombinator.com/item?id=9991528
 
 
 ## Instruction
