@@ -56,12 +56,12 @@ func main() {
 			for inp := range cInput {
 				// Check in gcc
 				if err := gccExecution(inp.gcc...); err != nil {
-					fmt.Println(err)
+					printReport("GCC", inp, err)
 					continue
 				}
 				// Transpiling by c2go
 				if err := c2goTranspiling(inp.c2go...); err != nil {
-					fmt.Println(err)
+					printReport("c2go", inp, err)
 				}
 			}
 			wg.Done()
@@ -77,12 +77,12 @@ func main() {
 				// Check in gcc
 				result, err := gccExecutionWithResult(inp.gcc...)
 				if err != nil {
-					fmt.Println(err)
+					printReport("GCC", inp, err)
 					continue
 				}
 				// Transpiling by c2go
 				if err := c2goTranspilingWithResult(result, inp.c2go...); err != nil {
-					fmt.Println(err)
+					printReport("c2go", inp, err)
 				}
 			}
 			wg.Done()
@@ -155,6 +155,17 @@ func main() {
 	fmt.Println("Fail results   c2go : ", fail)
 	fmt.Println("Amount warnings     : ", warnings)
 	fmt.Println("Amount results c2go : ", len(dataC2GO))
+}
+
+var m sync.Mutex
+
+func printReport(name string, inp part, err error) {
+	m.Lock()
+	fmt.Println("+=====================+")
+	fmt.Println("Name : ", name)
+	fmt.Println("Args : ", inp)
+	fmt.Println("Err  : ", err)
+	m.Unlock()
 }
 
 func folderCcode(sourceFolder string) {

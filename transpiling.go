@@ -21,7 +21,7 @@ func c2goTranspilingWithResult(result string, files ...string) (err error) {
 	defer func() {
 		cErrC2GO <- err
 	}()
-	fmt.Println("C2GO : ", files)
+	// fmt.Println("C2GO : ", files)
 
 	// Generate output file
 	dir, err := ioutil.TempDir("", "c2go-rating-c2go")

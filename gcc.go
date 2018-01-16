@@ -17,7 +17,7 @@ func gccExecution(files ...string) (err error) {
 			cErrGCC <- err
 		}
 	}()
-	fmt.Println("GCC  : ", files)
+	// fmt.Println("GCC  : ", files)
 
 	// Generate output file
 	dir, err := ioutil.TempDir("", "c2go-rating-gcc")
@@ -45,7 +45,7 @@ func gccExecutionWithResult(files ...string) (_ string, err error) {
 			cErrGCC <- err
 		}
 	}()
-	fmt.Println("GCC  : ", files)
+	// fmt.Println("GCC  : ", files)
 
 	// Generate output file
 	dir, err := ioutil.TempDir("", "c2go-rating-gcc")
