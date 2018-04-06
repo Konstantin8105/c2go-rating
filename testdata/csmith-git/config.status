@@ -438,7 +438,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/konstantin/go/src/github.com/Konstantin8105/c2go-rating/testdata/csmith-git'
+ac_pwd='/home/konstantin/go/src/github.com/Konstantin8105/c4go-rating/testdata/csmith-git'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -947,12 +947,12 @@ S["mkdir_p"]="$(MKDIR_P)"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]="strip"
-S["install_sh"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c2go-rating/testdata/csmith-git/autoconf/install-sh"
-S["MAKEINFO"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c2go-rating/testdata/csmith-git/autoconf/missing makeinfo"
-S["AUTOHEADER"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c2go-rating/testdata/csmith-git/autoconf/missing autoheader"
-S["AUTOMAKE"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c2go-rating/testdata/csmith-git/autoconf/missing automake-1.15"
-S["AUTOCONF"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c2go-rating/testdata/csmith-git/autoconf/missing autoconf"
-S["ACLOCAL"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c2go-rating/testdata/csmith-git/autoconf/missing aclocal-1.15"
+S["install_sh"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c4go-rating/testdata/csmith-git/autoconf/install-sh"
+S["MAKEINFO"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c4go-rating/testdata/csmith-git/autoconf/missing makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c4go-rating/testdata/csmith-git/autoconf/missing autoheader"
+S["AUTOMAKE"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c4go-rating/testdata/csmith-git/autoconf/missing automake-1.15"
+S["AUTOCONF"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c4go-rating/testdata/csmith-git/autoconf/missing autoconf"
+S["ACLOCAL"]="${SHELL} /home/konstantin/go/src/github.com/Konstantin8105/c4go-rating/testdata/csmith-git/autoconf/missing aclocal-1.15"
 S["VERSION"]="2.4.0"
 S["PACKAGE"]="csmith"
 S["CYGPATH_W"]="echo"
