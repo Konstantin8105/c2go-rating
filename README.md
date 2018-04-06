@@ -1,5 +1,5 @@
 # c2go-rating
-Rating for https://github.com/elliotchance/c2go
+Rating for https://github.com/Konstantin8105/c4go
 
 C code base:
 * https://cis.temple.edu/~giorgio/cis71/code/
@@ -58,10 +58,10 @@ https://news.ycombinator.com/item?id=9991528
 
 Now, that software checked only on linux system and may be not work on Win, Darwin.
 
-1.	go get -u github.com/Konstantin8105/c2go-rating
-2.	copy folders from $GOPATH/src/github.com/Konstantin8105/c2go-rating/SingleCcode to $GOPATH/bin
-3.	copy folders from $GOPATH/src/github.com/Konstantin8105/c2go-rating/sqlite to $GOPATH/bin
-4.	run `./c2go-rating`
+1.	go get -u github.com/Konstantin8105/c4go-rating
+2.	copy folders from $GOPATH/src/github.com/Konstantin8105/c4go-rating/SingleCcode to $GOPATH/bin
+3.	copy folders from $GOPATH/src/github.com/Konstantin8105/c4go-rating/sqlite to $GOPATH/bin
+4.	run `./c4go-rating`
 
 ## Table with results
 
@@ -81,7 +81,7 @@ Now, that software checked only on linux system and may be not work on Win, Darw
 |   | 64 is Ok at 90 source c files |
 | 08.07.2017 | No change |
 |   | 64 is Ok at 90 source c files |
-| 08.07.2017 | After rebase to upstream master c2go |
+| 08.07.2017 | After rebase to upstream master c4go |
 |   | 65 is Ok at 90 source c files |
 |   | File 'counts.c' have 1 error instand of 3 |
 |   | File "fibo.c" is Ok |
@@ -97,7 +97,7 @@ Now, that software checked only on linux system and may be not work on Win, Darw
 
 ```
 Amount mistake source by gcc:  0
-Amount mistake c2go results:  4
+Amount mistake c4go results:  4
 	Mistake file :  SingleCcode/27.c
 		Error:  panic: (*ast.FunctionDecl) (0x73d7e0,0xc4204288f0)
 	Mistake file :  SingleCcode/31.c

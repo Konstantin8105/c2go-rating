@@ -15,14 +15,14 @@ import (
 
 type part struct {
 	gcc  []string
-	c2go []string
+	c4go []string
 }
 
 var (
-	// cErrC2GO - channel of errors
-	cErrC2GO = make(chan error, 20)
+	// cErrc4go - channel of errors
+	cErrc4go = make(chan error, 20)
 
-	// cErrC2GO - channel of errors
+	// cErrc4go - channel of errors
 	cErrGCC = make(chan error, 20)
 
 	// cInput - just run
@@ -37,13 +37,13 @@ var (
 
 var (
 	partFlag = flag.String("part", "", "Choose: single, triangle, csmith. If nothing is choosed, then start all.")
-	onlyFlag = flag.String("only", "", "Choose: gcc, c2go.")
+	onlyFlag = flag.String("only", "", "Choose: gcc, c4go.")
 )
 
 func main() {
 	flag.Parse()
 
-	var dataC2GO []error
+	var datac4go []error
 	var dataGCC []error
 	var warnings int
 
@@ -59,9 +59,9 @@ func main() {
 					printReport("GCC", inp, err)
 					continue
 				}
-				// Transpiling by c2go
-				if err := c2goTranspiling(inp.c2go...); err != nil {
-					printReport("c2go", inp, err)
+				// Transpiling by c4go
+				if err := c4goTranspiling(inp.c4go...); err != nil {
+					printReport("c4go", inp, err)
 				}
 			}
 			wg.Done()
@@ -70,7 +70,7 @@ func main() {
 		wg.Add(1)
 		go func() {
 			for inp := range cInputWithChecking {
-				if *onlyFlag == "c2go" {
+				if *onlyFlag == "c4go" {
 					cInput <- inp
 					continue
 				}
@@ -80,9 +80,9 @@ func main() {
 					printReport("GCC", inp, err)
 					continue
 				}
-				// Transpiling by c2go
-				if err := c2goTranspilingWithResult(result, inp.c2go...); err != nil {
-					printReport("c2go", inp, err)
+				// Transpiling by c4go
+				if err := c4goTranspilingWithResult(result, inp.c4go...); err != nil {
+					printReport("c4go", inp, err)
 				}
 			}
 			wg.Done()
@@ -118,8 +118,8 @@ func main() {
 
 	wg2.Add(1)
 	go func() {
-		for e := range cErrC2GO {
-			dataC2GO = append(dataC2GO, e)
+		for e := range cErrc4go {
+			datac4go = append(datac4go, e)
 		}
 		wg2.Done()
 	}()
@@ -140,21 +140,21 @@ func main() {
 
 	wg.Wait()
 
-	close(cErrC2GO)
+	close(cErrc4go)
 	close(cErrGCC)
 	close(cWarning)
 	wg2.Wait()
 
 	var fail int
-	for _, d := range dataC2GO {
+	for _, d := range datac4go {
 		if d != nil {
 			fail++
 		}
 	}
 	fmt.Println("Fail results   gcc  : ", len(dataGCC))
-	fmt.Println("Fail results   c2go : ", fail)
+	fmt.Println("Fail results   c4go : ", fail)
 	fmt.Println("Amount warnings     : ", warnings)
-	fmt.Println("Amount results c2go : ", len(dataC2GO))
+	fmt.Println("Amount results c4go : ", len(datac4go))
 }
 
 var m sync.Mutex
@@ -173,7 +173,7 @@ func folderCcode(sourceFolder string) {
 	{
 		files, err := ioutil.ReadDir(sourceFolder)
 		if err != nil {
-			cErrC2GO <- err
+			cErrc4go <- err
 		}
 
 		for _, f := range files {
@@ -192,7 +192,7 @@ func folderCcode(sourceFolder string) {
 	for _, file := range files {
 		cInput <- part{
 			gcc:  []string{file, "-lm"},
-			c2go: []string{file},
+			c4go: []string{file},
 		}
 	}
 }
@@ -202,7 +202,7 @@ func triangle() {
 	file := sourceFolder + "triangle.c"
 	cInput <- part{
 		gcc:  []string{file, "-lm"},
-		c2go: []string{file},
+		c4go: []string{file},
 	}
 }
 
@@ -272,7 +272,7 @@ func csmith() {
 	for _, file := range files {
 		cInputWithChecking <- part{
 			gcc:  []string{"-I./testdata/csmith-git/runtime/", file},
-			c2go: []string{"-clang-flag", "-I./testdata/csmith-git/runtime/", file},
+			c4go: []string{"-clang-flag", "-I./testdata/csmith-git/runtime/", file},
 		}
 	}
 }

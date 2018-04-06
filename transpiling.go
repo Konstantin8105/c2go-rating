@@ -10,21 +10,21 @@ import (
 	"strings"
 )
 
-func c2goTranspiling(files ...string) error {
-	return c2goTranspilingWithResult("", files...)
+func c4goTranspiling(files ...string) error {
+	return c4goTranspilingWithResult("", files...)
 }
 
-func c2goTranspilingWithResult(result string, files ...string) (err error) {
-	if *onlyFlag != "" && *onlyFlag != "c2go" {
+func c4goTranspilingWithResult(result string, files ...string) (err error) {
+	if *onlyFlag != "" && *onlyFlag != "c4go" {
 		return nil
 	}
 	defer func() {
-		cErrC2GO <- err
+		cErrc4go <- err
 	}()
-	// fmt.Println("C2GO : ", files)
+	// fmt.Println("c4go : ", files)
 
 	// Generate output file
-	dir, err := ioutil.TempDir("", "c2go-rating-c2go")
+	dir, err := ioutil.TempDir("", "c4go-rating-c4go")
 	if err != nil {
 		return err
 	}
@@ -40,14 +40,14 @@ func c2goTranspilingWithResult(result string, files ...string) (err error) {
 	var arg []string
 	arg = append(arg, "transpile", "-o", dir+"/1.go")
 	arg = append(arg, files...)
-	cmd := exec.Command("c2go", arg...)
+	cmd := exec.Command("c4go", arg...)
 	var out bytes.Buffer
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err = cmd.Run()
 	if err != nil {
-		return fmt.Errorf("c2go : %v\n%v\n%v", err, out.String(), stderr.String())
+		return fmt.Errorf("c4go : %v\n%v\n%v", err, out.String(), stderr.String())
 	}
 
 	// Calculate warnings
@@ -71,14 +71,14 @@ func c2goTranspilingWithResult(result string, files ...string) (err error) {
 	}
 
 	// compare result
-	var c2goResult string
-	c2goResult, err = run("go", []string{"run", dir + "/1.go"}...)
+	var c4goResult string
+	c4goResult, err = run("go", []string{"run", dir + "/1.go"}...)
 	if err != nil {
 		return
 	}
 
-	if result != c2goResult {
-		err = fmt.Errorf("results is different:\n%v\n%v", result, c2goResult)
+	if result != c4goResult {
+		err = fmt.Errorf("results is different:\n%v\n%v", result, c4goResult)
 		return
 	}
 

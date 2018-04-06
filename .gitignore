@@ -15,7 +15,8 @@
 
 # applications
 
-c2go-rating
+c4go-rating
 app
 platform.info
 1
+./testdata/csmith-git/src/*.o

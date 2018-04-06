@@ -20,7 +20,7 @@ func gccExecution(files ...string) (err error) {
 	// fmt.Println("GCC  : ", files)
 
 	// Generate output file
-	dir, err := ioutil.TempDir("", "c2go-rating-gcc")
+	dir, err := ioutil.TempDir("", "c4go-rating-gcc")
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func gccExecutionWithResult(files ...string) (_ string, err error) {
 	// fmt.Println("GCC  : ", files)
 
 	// Generate output file
-	dir, err := ioutil.TempDir("", "c2go-rating-gcc")
+	dir, err := ioutil.TempDir("", "c4go-rating-gcc")
 	if err != nil {
 		return "", err
 	}
