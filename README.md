@@ -1,4 +1,4 @@
-# c2go-rating
+# c4go-rating
 Rating for https://github.com/Konstantin8105/c4go
 
 C code base:
